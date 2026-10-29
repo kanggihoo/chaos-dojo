@@ -74,7 +74,7 @@
 ## 5. 구현 공정성 (AI가 짠 구현이 교란변수가 되는 문제)
 
 - **공정성 체크리스트:** 스키마, 격리 수준, 요청 의미, 재시도 정책, 커넥션 풀, 타임아웃, 트랜잭션 범위, 인덱스 동일.
-- 실행 중 대표 SQL, `EXPLAIN`, 락 대기(`performance_schema.data_lock_waits`) 스냅샷 수집.
+- 실행 중 대표 SQL, `EXPLAIN`, 락 대기(`pg_locks` + `pg_stat_activity`) 스냅샷 수집, SQL 통계는 `pg_stat_statements`.
 - **튜닝 예산: 구현당 최대 3사이클** (가설 → 변경 → 측정), 사이클별 변경 로그와 전후 결과 보존.
 - `impls/<name>/PROVENANCE.md`: 생성 모델/버전, 요구사항 프롬프트, 수동 수정 이력.
 - impl 고정(태그) 시 사용자 diff 리뷰 1회 + notes에 "이 구현의 약점" 기록. 이후 실행마다 commit hash + 체크리스트 결과 자동 기록.
@@ -106,15 +106,23 @@ results/<날짜>_<카타>_<impl>/
 
 | 항목 | 값 |
 |---|---|
-| 언어/프레임워크 | Java 21, Spring Boot 3.x (MVC, 가상 스레드 off) |
-| DB | MySQL 8, InnoDB, REPEATABLE READ |
+| 언어/프레임워크 | Java 25 (LTS), Spring Boot 4.x (MVC, 가상 스레드 off) |
+| DB | PostgreSQL, READ COMMITTED (기본값을 고정 조건으로 명시) |
+| 데이터 접근 | Spring Data JPA (Hibernate), OSIV off, 실행 SQL 로깅 on |
+| 마이그레이션 | Flyway |
+| 메트릭 | Actuator + Micrometer |
+| 장애 대응 (시즌2~) | Resilience4j |
+| 빌드 | Gradle (Kotlin DSL) |
 | 커넥션 풀 | HikariCP `maximumPoolSize=10`, 시즌0 튜닝 금지 |
 | 부하 | k6 (subprocess) |
 | 장애 주입 | Toxiproxy, docker pause/kill |
 | 관측 | Prometheus, cAdvisor |
 | Redis | 필요한 카타에서 도입 |
+| Kafka | 시즌2 Outbox relay 비교에서 도입 |
 
 정확한 패치 버전과 이미지 digest는 착수일에 확정해 compose에 고정한다.
+
+**JPA를 쓰는 이유:** JPA로 평범하게 짠 코드(`findById` → `setStock` → dirty checking)가 그대로 read-modify-write 경쟁 상태라 시즌0 naive 구현이 된다. 비관락(`@Lock`), 낙관락(`@Version`), 원자 UPDATE(`@Modifying @Query`)를 표준 기능으로 구현할 수 있어 impl 간 공정성도 높다.
 
 ## 8. 시즌0 (4주)
 
@@ -124,7 +132,7 @@ results/<날짜>_<카타>_<impl>/
 - **A1-perf:** 재고 충분 → 처리량/p99. 경합률 축 = 상품 1 / 10 / 100개 균등 분산
 - **impl:** `naive` (read-modify-write, 의도된 버그) vs `atomic-update` (`UPDATE ... SET stock = stock - 1 WHERE stock > 0`)
 - **장애:** Toxiproxy DB 지연 1종
-- 데이터: 소규모 고정 시드, meta에 행 수·버퍼풀 상태·준비 절차 기록
+- 데이터: 소규모 고정 시드, meta에 행 수·캐시(shared_buffers) 상태·준비 절차 기록
 
 | 주차 | 할 일 |
 |---|---|
@@ -145,7 +153,7 @@ results/<날짜>_<카타>_<impl>/
 |---|---|---|
 | 1 | 동시성 확장 | 비관락, 낙관락+재시도, Redis DECR / 데이터 규모·분포 왜도·cold 캐시 카타 / 블라인드 카타 / Rust 오케스트레이터 CLI 착수 |
 | 2 | 외부 장애 · 멱등성 | 가짜 PG(지연/5xx/타임아웃/늦은 승인), 재시도·서킷브레이커·멱등키, Outbox. **relay 방식만 비교(폴링 vs Kafka)**, 나머지 고정. failpoint 계약(`before_db_commit`, `after_pg_approve`, `after_db_commit_before_publish`) — 내부 halt와 외부 SIGKILL은 별도 조건 |
-| 3 | 인프라 장애 | 우선순위: PG 승인 직후 kill → 고아 승인 조정 > 앱 2대 중 kill -9 > 분산락 lease 만료 반례(펜싱 토큰) > MySQL 복제 지연 |
+| 3 | 인프라 장애 | 우선순위: PG 승인 직후 kill → 고아 승인 조정 > 앱 2대 중 kill -9 > 분산락 lease 만료 반례(펜싱 토큰) > PostgreSQL 복제 지연 |
 | 4 | 보안 | BOLA 하나부터 (유저 2명·시드 고정). 판정 3축 독립: 공격 결과 / 로그 증거 / 알림(60s 내). 오탐 = 정상 트래픽 대조 run 알림 수 0. 의도적 취약 impl → 수정 기록. AI 레드팀은 고정 시나리오 이후 탐색 단계로 |
 
 ## 10. 디렉터리 구조 (예정)
