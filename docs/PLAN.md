@@ -106,14 +106,9 @@ results/<날짜>_<카타>_<impl>/
 
 | 항목 | 값 |
 |---|---|
-| 언어/프레임워크 | Java 25 (LTS), Spring Boot 4.x (MVC, 가상 스레드 off) |
+| 백엔드 언어/프레임워크 | **미정** |
 | DB | PostgreSQL, READ COMMITTED (기본값을 고정 조건으로 명시) |
-| 데이터 접근 | Spring Data JPA (Hibernate), OSIV off, 실행 SQL 로깅 on |
-| 마이그레이션 | Flyway |
-| 메트릭 | Actuator + Micrometer |
-| 장애 대응 (시즌2~) | Resilience4j |
-| 빌드 | Gradle (Kotlin DSL) |
-| 커넥션 풀 | HikariCP `maximumPoolSize=10`, 시즌0 튜닝 금지 |
+| 커넥션 풀 | 크기 10 고정, 시즌0 튜닝 금지 |
 | 부하 | k6 (subprocess) |
 | 장애 주입 | Toxiproxy, docker pause/kill |
 | 관측 | Prometheus, cAdvisor |
@@ -121,8 +116,6 @@ results/<날짜>_<카타>_<impl>/
 | Kafka | 시즌2 Outbox relay 비교에서 도입 |
 
 정확한 패치 버전과 이미지 digest는 착수일에 확정해 compose에 고정한다.
-
-**JPA를 쓰는 이유:** JPA로 평범하게 짠 코드(`findById` → `setStock` → dirty checking)가 그대로 read-modify-write 경쟁 상태라 시즌0 naive 구현이 된다. 비관락(`@Lock`), 낙관락(`@Version`), 원자 UPDATE(`@Modifying @Query`)를 표준 기능으로 구현할 수 있어 impl 간 공정성도 높다.
 
 ## 8. 시즌0 (4주)
 
