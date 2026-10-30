@@ -71,6 +71,9 @@ class FlowEngine:
     def popen(self, *args):
         raise AssertionError("no streaming in flow tests")
 
+    def env(self):
+        return {"PATH": "/usr/bin", "DOCKER_HOST": self.host}
+
 
 def scripted(monkeypatch, plan=None, verdicts=None):
     """plan: {(n, phase): exception}; verdicts: {n: (completion, validity, correctness, slo)}."""
@@ -145,6 +148,9 @@ def test_exit_codes(repo, monkeypatch, verdicts, code):
     assert start(monkeypatch, repo, eng) == code
     d, run = the_run(repo)
     assert run["exit_code"] == code and eng.lock is None and (d / "report.html").exists()
+    assert run["identity"]["conditions"]["subprocess_env_names"] == ["CHAOS_DB_PASSWORD", "CHAOS_DB_USER", "CHAOS_GF_PASSWORD",
+                                                                     "CHAOS_WM_AUTH", "DOCKER_HOST", "PATH"]
+    assert "secret-host" not in (d / "run.json").read_text()  # docker info Name is never recorded
 
 
 def test_invalid_and_incomplete_is_3_and_run_continues(repo, monkeypatch):

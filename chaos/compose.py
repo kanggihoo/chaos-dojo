@@ -78,6 +78,7 @@ def repeat_compose(spec, run, repeat, image_volumes):
             svc["command"] = ["--port", str(d["port"]), "--admin-api-basic-auth", f"${{{WM_AUTH}}}", "--disable-extensions-scanning",
                               "--disable-banner", "--max-request-journal-entries", "50000"]
             svc["volumes"] = [f"{problem_path(spec, d['stubs'])}:/home/wiremock/mappings:ro"]
+            svc["healthcheck"] = {"disable": True}  # the image's check calls the admin API, which now needs auth; the harness polls it
         svc["volumes"] = svc.get("volumes", []) + declare_volumes(d["name"], d["image"])
         services[d["name"]] = svc
 

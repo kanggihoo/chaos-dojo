@@ -443,6 +443,9 @@ class Run:
             },
             "harness": harness_git(self.root),
             "conditions": {"seed": s["workload"]["seed"], "budgets": self.budgets(),
+                           "engine_host": "DOCKER_HOST" if self.eng.host else None,
+                           "subprocess_env_names": sorted(set(self.eng.env()) | {compose.DB_USER, compose.DB_PASSWORD,
+                                                                                  compose.WM_AUTH, compose.GF_PASSWORD}),
                            "tools": self.tool_versions(),
                            "other_containers": {"count": len(others.split()), "images": sorted(set(others.split()))}},
         }

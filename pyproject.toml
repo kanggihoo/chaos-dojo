@@ -28,5 +28,5 @@ packages = ["chaos"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-markers = ["docker: needs a real Docker engine"]
-addopts = "-m 'not docker'"
+markers = ["docker: needs a real Docker engine", "e2e: checks over recorded runs in results/"]
+addopts = "-m 'not docker and not e2e'"

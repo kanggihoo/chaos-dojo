@@ -1,163 +1,107 @@
-# Chaos Dojo 기획서
+# chaos-lab 기획서
 
-> 부하와 장애를 내가 제어해서 만들어내고, 그걸 버티는 백엔드를 여러 방식으로 구현·비교하며 아키텍처 선택 안목을 기르는 학습 프로젝트.
-> Claude ↔ Codex 15라운드 토론 합의안 기반 (2026-10-29)
+> 부하와 장애를 내가 제어해서 만들어 내고, 그걸 버티는 백엔드를 여러 방식으로 구현·비교하며 아키텍처 선택 안목을 기르는 학습 프로젝트.
+> 처음 합의안(2026-10-29)을 실험 하네스 설계(2026-10-31)에 맞춰 고쳐 썼다. 세부 규칙은 이 문서에 복제하지 않고 아래 spec과 결정 기록을 따른다.
+
+- 계약(명령, 결과 배치, 판정, 수치): [experiment-harness spec](specs/experiment-harness/spec.md)
+- 결정과 그 이유: [decisions.md](specs/experiment-harness/decisions.md), [ADR 0001](adr/0001-problems-as-data-generated-compose.md)
+- 용어: [GLOSSARY.md](../GLOSSARY.md)
 
 ## 1. 목적
 
 - **학습 + 포트폴리오.** 서비스 운영이 목적이 아니다.
-- 실제 서비스엔 트래픽도 장애도 없다 → **부하와 장애를 직접 만들어낸다.**
-- AI로 구현을 싸고 빠르게 만들 수 있다 → 실무에선 바꾸기 어려운 스택/아키텍처를 여러 개 시도하고 **수치로 비교**한다.
-- 한 번 하고 끝이 아니라 **시나리오(카타)가 계속 쌓이는 구조.**
+- 실제 서비스엔 트래픽도 장애도 없다 → **부하와 장애를 직접 만들어 낸다.**
+- AI로 구현을 싸고 빠르게 만들 수 있다 → 실무에선 바꾸기 어려운 스택·아키텍처를 여러 개 시도하고 **수치로 비교**한다.
+- 한 번 하고 끝이 아니라 **problem과 scenario가 계속 쌓이는 구조.** 어떤 scenario든 같은 명령, 같은 결과 형식, 같은 리포트로 다시 돌린다.
 
 ### 우선순위
 
 1. 백엔드 실험 (중심)
-2. Rust 학습 (보조 — 실험 도구를 Rust로 만든다)
+2. Rust 학습 (보조 — 지금의 Python CLI를 나중에 Rust CLI나 데스크톱 앱으로 옮긴다)
 
-## 2. 핵심 개념: 카타(Kata)
+## 2. 핵심 개념
 
-카타 = **문제**, impl = **풀이**.
+- **problem**: 하나의 업무 동작을 둘러싼 장애 상황의 묶음. 예: "외부 API가 느려지거나 죽는다".
+- **scenario**: problem의 실행 가능한 변형. 예: baseline, api-slow, api-down.
+- **impl**: problem의 풀이. 같은 problem의 모든 scenario에 돌릴 수 있다. 예: naive, timeout.
+- **run**: scenario 하나를 impl 하나로 실행한 것과 그 결과 묶음. **repeat** 5회로 이뤄진다.
 
-| 고정 (카타 = 계약) | 교체 (impl) |
+| 고정 (problem·scenario = 계약) | 교체 (impl) |
 |---|---|
-| API 스펙 (OpenAPI), 상태코드표, 에러 형식 (RFC 9457) | 해당 문제 영역의 구현만 |
-| 워크로드 (k6, open model) | 락/큐/캐시/메시징 전략 |
-| 장애 타임라인 | 의존성 추가(Redis, Kafka 등)도 연구 변수 |
-| 불변식 판정 | |
-| 자원 한도, 스택/버전(이미지 digest) | |
+| API 계약(OpenAPI), 상태 코드 표, 오류 형식(RFC 9457) | 해당 문제 영역의 구현만 |
+| 워크로드(k6, open model), 장애 타임라인 | 대기·재시도·락·큐·캐시 전략 |
+| 불변식, SLO | 의존성 추가도 비교 변수 (비용과 함께 기록) |
+| 자원 예산, 이미지 digest | |
 
-- **변수 하나만 바꾼다.** 의존성을 추가하는 것 자체가 변수이며, 그 비용(자원·컨테이너 수·장애 지점)도 함께 기록한다.
-- 카타 메타: 난이도, 예상 소요, 선행 지식, 성공 조건, 재현 명령, 자원 상한, 알려진 한계, 명세 버전.
-- 기준 구현은 정답이 아니라 **비교 기준**이다.
-- 공개 범위: 저장소에 카타 명세 + 기준 구현 + 로컬 판정 명령까지. 제출 서비스·랭킹·자동 채점은 만들지 않는다.
+- **변수 하나만 바꾼다.** 같은 problem의 impl끼리는 대기 정책처럼 그 impl을 정의하는 설정만 다르다.
+- problem·scenario·impl은 언어 중립 데이터(YAML + 스키마)이고, 하네스 코드는 problem마다 바뀌지 않는다.
+- 공개 범위: 저장소에 problem 정의 + impl + 로컬 실행 명령까지. 제출 서비스·랭킹·자동 채점은 만들지 않는다.
 
-## 3. 판정: 불변식
+## 3. 판정
 
-"200 응답 수 = DB 주문 수 = PG 승인 수" 같은 단순 등식은 쓰지 않는다 (실패·재시도·지연 승인에서 깨짐).
+repeat마다 네 판정을 따로 기록한다: completion, measurement validity, correctness, SLO. 정의와 규칙은 spec의 "판정"과 GLOSSARY를 따른다.
 
-- 주문 상태머신: `PENDING → PAID | FAILED | CANCELLED`
-- `trace-id`와 `Idempotency-Key`는 분리 (재시도는 같은 멱등키 유지).
-- 장애 복구 후 불변식을 1초 간격 폴링 → **수렴 시간(time-to-consistency)을 지표로 기록**, 상한(60s) 초과 시 실패.
+- 단순 등식("200 응답 수 = DB 주문 수")은 쓰지 않는다. 불변식은 request id 단위로 판정하고, 클라이언트가 확인하지 못한 결과는 위반이 아니라 **ambiguous**로 따로 센다.
+- 장애가 있는 scenario에서는 장애 해제 후 probe로 **time-to-recovery**를 잰다.
+- 통계는 complete이면서 valid인 repeat의 repeat별 값 중앙값과 CV로만 만든다. 요청을 repeat 사이에 합치지 않는다.
+- 로컬 결과는 "같은 환경 내 상대 비교"로만 표기한다.
 
-| ID | 불변식 |
-|---|---|
-| I1 | PG 최종 승인(미취소) 건 = PAID 주문 |
-| I2 | 동일 멱등키 승인 ≤ 1 |
-| I3 | 재고 ≥ 0, 확정 주문 수량 = 재고 원장(`stock_ledger`) 변동 합 |
-| I4 | 수렴 후 PENDING = 0 |
+## 4. 구현 공정성
 
-## 4. 측정 신뢰도
+- impl마다 `PROVENANCE.md`에 출처와 수정 이력을 남긴다.
+- 서버·클라이언트·풀 설정은 고정 수치로 두고 impl별로 튜닝하지 않는다.
+- 결론 문구는 항상 **"이 구현·이 설정·이 환경에서"**로 한정한다.
 
-- k6는 **open model (constant-arrival-rate)** 만 사용.
-- 동일 조건 **5회 반복**, 중앙값 + 변동계수(CV). CV > 10%는 재실행·원인 조사 신호.
-- 워밍업은 고정 시간이 아니라 지표 안정화로 판단.
-- **부하기 포화 = run 무효:** `dropped_iterations > 0` 또는 k6 CPU > 70%.
-- Prometheus 스크레이프 누락 시 run 무효.
-- 지연 지표는 결과 유형별(성공 / 비즈니스 거절 / 에러)로 분리.
-- **로컬 결과는 "같은 환경 내 상대 비교"로만 표기.** 절대 수치 주장은 부하기/SUT 분리 2VM에서 재현 후.
-
-### 자원
-
-- 앱 몫 고정: 1코어 / 512MB (인스턴스가 늘면 인스턴스당 분할).
-- 인프라 의존성 몫 별도 예산: 1코어 / 1GB.
-- 관측 스택은 "앱 한도 계산에서 제외"하되 사용량은 기록.
-- 리포트에 앱 / 인프라 / 관측 사용량 분리 기록.
-
-### 관측
-
-- 시즌0: Prometheus + cAdvisor + k6 결과만.
-- 트레이싱(Tempo)은 설명에 실제 공백이 보일 때 추가. Loki + 알림은 보안 시즌.
-- 계측(OTel agent)은 기본 on, 대표 impl에서 on/off 짝 실험으로 오버헤드 보고 (p99 +10% 초과 시 경고 표기).
-- Grafana는 실시간 디버깅용. 포트폴리오 차트는 결과 파일에서 정적 생성.
-
-## 5. 구현 공정성 (AI가 짠 구현이 교란변수가 되는 문제)
-
-- **공정성 체크리스트:** 스키마, 격리 수준, 요청 의미, 재시도 정책, 커넥션 풀, 타임아웃, 트랜잭션 범위, 인덱스 동일.
-- 실행 중 대표 SQL, `EXPLAIN`, 락 대기(`pg_locks` + `pg_stat_activity`) 스냅샷 수집, SQL 통계는 `pg_stat_statements`.
-- **튜닝 예산: 구현당 최대 3사이클** (가설 → 변경 → 측정), 사이클별 변경 로그와 전후 결과 보존.
-- `impls/<name>/PROVENANCE.md`: 생성 모델/버전, 요구사항 프롬프트, 수동 수정 이력.
-- impl 고정(태그) 시 사용자 diff 리뷰 1회 + notes에 "이 구현의 약점" 기록. 이후 실행마다 commit hash + 체크리스트 결과 자동 기록.
-- 결론 문구는 항상 **"이 구현·이 튜닝 예산·이 환경에서"** 로 한정.
-
-## 6. 학습 루프와 기록
+## 5. 학습 루프
 
 매 실험: **예측 → 측정 → 해설.** 구현은 AI가 짜도 가설과 해설은 직접 쓴다.
 
-```
-results/<날짜>_<카타>_<impl>/
-├── meta.yaml      # 실행 전 예측(승자·순위·p99 범위) + 환경/버전/자원/commit 자동 기록
-├── metrics.json   # schema_version 포함, 필수 필드 계약
-├── events.jsonl   # 장애 이벤트 {seq, action, target, planned_at, actual_at, result, error}
-├── arch.mmd       # 수동 아키텍처 그림 (baseline 대비 변경 강조)
-└── notes.md       # 해설: 예측이 왜 맞았고 왜 틀렸나
-```
+- `chaos run ... --predict <파일>`로 예측을 결과에 함께 남기고, 리포트에서 결과와 나란히 본다.
+- 발견은 수치와 적용 조건을 함께 쓴다. (예: "이 워크로드·자원 한도에서 lookup이 2초 느려지면 …")
 
-- **예측 적중 곡선:** 승자 적중 / 순위 점수 / p99 범위 포함 여부를 분리 표시, 카타 수·반복 수 표기. 표본이 적을 땐 "탐색 지표"로 명시.
-- **블라인드 카타 (시즌 종료마다):** 변형 문제를 미리 생성해 해시로 봉인, 루브릭 고정. 실행 전 설계 선택 + 근거 제출 → 공개 → 근거·위험 인식 기준으로 채점.
-- **발견 승격 규칙:** README "발견 목록"에 올리려면 기본 장애 + 변형 1개 이상(시드 고정 지터 또는 연결 리셋)에서 결론 방향 유지. 아니면 "조건부 발견".
-- 발견은 수치와 적용 조건을 함께 쓴다. (예: "이 워크로드·자원 한도에서 경합률 X%부터 …")
-
-### 1페이지 리포트 최소 구성
-
-질문·가설 / 환경·버전·자원 / 워크로드·장애 타임라인 / 구현 간 차이 / 핵심 차트(처리량·오류율·p99·수렴시간) / 불변식 판정 / 반복 횟수·CV / 해설·한 줄 결론 / 재실행 명령·원본 결과 링크
-
-## 7. 고정 스택
+## 6. 스택
 
 | 항목 | 값 |
 |---|---|
-| 백엔드 언어/프레임워크 | **미정** |
-| DB | PostgreSQL, READ COMMITTED (기본값을 고정 조건으로 명시) |
-| 커넥션 풀 | 크기 10 고정, 시즌0 튜닝 금지 |
-| 부하 | k6 (subprocess) |
-| 장애 주입 | Toxiproxy, docker pause/kill |
-| 관측 | Prometheus, cAdvisor |
-| Redis | 필요한 카타에서 도입 |
-| Kafka | 시즌2 Outbox relay 비교에서 도입 |
+| 백엔드 | Spring Boot 4, Java 21, JdbcTemplate (JPA 없음), 플랫폼 스레드 위의 동기 MVC |
+| DB | PostgreSQL, READ COMMITTED, JDBC pool 10 |
+| 하네스 | uv 기반 Python CLI `chaos` (OS별 스크립트 없음) |
+| 환경 | repeat마다 생성하는 Docker Compose, 이미지 digest 고정 |
+| 부하 | k6 (constant-arrival-rate) |
+| 장애 주입 | Toxiproxy (모든 의존성 경로), 외부 API 가짜는 WireMock |
+| 관측 | Grafana Alloy → grafana/otel-lgtm (지표·로그·trace), 판정은 결과 파일로만 |
 
-정확한 패치 버전과 이미지 digest는 착수일에 확정해 compose에 고정한다.
+정확한 버전과 수치는 spec의 Constraints가 정본이다.
 
-## 8. 시즌0 (4주)
+## 7. 지금 범위
 
-**범위:** 카타 A1 하나. 가짜 PG·결제 failpoint는 시즌2로.
+첫 problem `external-api`: 주문 API가 외부 상품 API에 가격·재고를 묻는데, 그 API가 느려지거나(api-slow) 죽는다(api-down). baseline과 함께 scenario 3개, impl 2개(naive, timeout).
 
-- **A1-correct:** 재고 100, 단일 상품 매진 경쟁 → 정합성(I3) 판정
-- **A1-perf:** 재고 충분 → 처리량/p99. 경합률 축 = 상품 1 / 10 / 100개 균등 분산
-- **impl:** `naive` (read-modify-write, 의도된 버그) vs `atomic-update` (`UPDATE ... SET stock = stock - 1 WHERE stock > 0`)
-- **장애:** Toxiproxy DB 지연 1종
-- 데이터: 소규모 고정 시드, meta에 행 수·캐시(shared_buffers) 상태·준비 절차 기록
+완료 조건은 spec의 수용 기준을 따른다: 6개 조합이 같은 명령 하나로 돌고, macOS arm64에서 기록된 run이 남는다.
 
-| 주차 | 할 일 |
-|---|---|
-| 1 | docker-compose, A1 계약(주문·재고 최소 API), DB 지연 이벤트 |
-| 2 | naive / atomic-update 구현, correct 판정 + perf 부하 루프 (Makefile) |
-| 3 | 5회 반복, 판정 신뢰도, 결과 아티팩트 자동 생성 |
-| 4 | 1페이지 리포트 (**Rust 리포트 생성기**: JSON → HTML+SVG), README 발견 1개 |
+## 8. 향후 방향
 
-**DoD:** `make run SCENARIO=A1-correct IMPL=naive` 한 줄로 재현 + naive의 I3 위반을 판정기가 검출 + 리포트 1장 생성.
+| 순서 | 주제 | 포인트 |
+|---|---|---|
+| 1 | 동시성 | 재고 경합 problem: naive(read-modify-write) vs 원자적 UPDATE, 비관락, 낙관락+재시도, Redis DECR. 경합률 축(상품 1/10/100개) |
+| 2 | 런타임 변수 | 같은 problem에서 Java 21 vs 25, virtual threads on/off, OTel Java agent on/off 오버헤드 |
+| 3 | 외부 장애 · 멱등성 | 가짜 결제 API(지연/5xx/timeout/늦은 승인), 재시도·서킷 브레이커·bulkhead·멱등 키, Outbox |
+| 4 | 인프라 장애 | DB 장애, 앱 kill·포화, 복제 지연. 이때 `up=0` 무효 규칙을 다시 본다 (ADR 0001) |
+| 5 | 보안 | BOLA 하나부터. 공격 결과·로그 증거·알림을 따로 판정 |
 
 ### 시간 규칙
 
-도구 작업은 전체 시간의 **30% 이하.** 주간 시간 기록, 2주 연속 초과 시 도구 기능 동결.
+도구 작업은 전체 시간의 **30% 이하.** 2주 연속 초과 시 도구 기능 동결.
 
-## 9. 이후 시즌
-
-| 시즌 | 주제 | 포인트 |
-|---|---|---|
-| 1 | 동시성 확장 | 비관락, 낙관락+재시도, Redis DECR / 데이터 규모·분포 왜도·cold 캐시 카타 / 블라인드 카타 / Rust 오케스트레이터 CLI 착수 |
-| 2 | 외부 장애 · 멱등성 | 가짜 PG(지연/5xx/타임아웃/늦은 승인), 재시도·서킷브레이커·멱등키, Outbox. **relay 방식만 비교(폴링 vs Kafka)**, 나머지 고정. failpoint 계약(`before_db_commit`, `after_pg_approve`, `after_db_commit_before_publish`) — 내부 halt와 외부 SIGKILL은 별도 조건 |
-| 3 | 인프라 장애 | 우선순위: PG 승인 직후 kill → 고아 승인 조정 > 앱 2대 중 kill -9 > 분산락 lease 만료 반례(펜싱 토큰) > PostgreSQL 복제 지연 |
-| 4 | 보안 | BOLA 하나부터 (유저 2명·시드 고정). 판정 3축 독립: 공격 결과 / 로그 증거 / 알림(60s 내). 오탐 = 정상 트래픽 대조 run 알림 수 0. 의도적 취약 impl → 수정 기록. AI 레드팀은 고정 시나리오 이후 탐색 단계로 |
-
-## 10. 디렉터리 구조 (예정)
+## 9. 디렉터리 구조
 
 ```
-chaos-dojo/
-├── docs/                 # 기획, 로드맵
-├── katas/<id>/           # 계약, k6, 장애 타임라인, 판정 SQL, kata.yaml
-├── fake-pg/              # 시즌2
-├── infra/                # docker-compose, toxiproxy, prometheus
-├── impls/<name>/         # 풀이 + PROVENANCE.md
-├── tools/report/         # Rust 리포트 생성기
-└── results/              # 실행 결과
+chaos-contract.yaml          # 모든 problem이 공유하는 하네스 상수
+chaos/                       # Python CLI
+schemas/                     # JSON Schema (Python·Rust CLI 공용) + 예시
+harness/                     # Alloy 설정, Grafana 대시보드, k6 공통 래퍼
+problems/<problem>/          # problem.yaml, scenarios/, impls/, OpenAPI, stub, SQL, k6
+results/<run-id>/            # 실행 결과 (커밋)
+reports/                     # chaos report 출력 (git 무시)
+docs/                        # 기획, 로드맵, spec, ADR
 ```
