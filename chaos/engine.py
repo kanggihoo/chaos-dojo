@@ -54,7 +54,8 @@ class Engine:
         return json.loads(self.text(*args))
 
     def compose(self, project_dir, project, file, *args, check=True, timeout=None):
-        return self.docker("compose", "--project-directory", str(project_dir), "-p", project, "-f", str(file), *args,
+        # -f resolves against the process cwd, not the project directory, so pass it absolute.
+        return self.docker("compose", "--project-directory", str(project_dir), "-p", project, "-f", str(project_dir / file), *args,
                            check=check, timeout=timeout)
 
     def popen(self, *args):

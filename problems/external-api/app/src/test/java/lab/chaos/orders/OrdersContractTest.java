@@ -285,6 +285,8 @@ class OrdersContractTest {
         Map<String, Object> a = new java.util.HashMap<>(naive.getBean(ResolvedSettings.class).resolved());
         Map<String, Object> b = new java.util.HashMap<>(timeout.getBean(ResolvedSettings.class).resolved());
         assertThat(a.get("spring.threads.virtual.enabled")).isEqualTo("false");
+        assertThat(a).containsEntry("actual.business.max-threads", 50).containsEntry("actual.business.accept-count", 100)
+                .containsEntry("actual.business.max-connections", 200);
         for (String k : List.of("chaos.impl", "chaos.lookup.deadline-ms", "chaos.lookup.response-timeout-ms")) { a.remove(k); b.remove(k); }
         assertThat(a).isEqualTo(b);
     }

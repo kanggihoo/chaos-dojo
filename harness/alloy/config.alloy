@@ -1,0 +1,128 @@
+// The run's single collection point. Finds this run's containers by label, scrapes only the app's
+// management port on the run network, tails container logs, receives k6 remote-write and app OTLP,
+// and sends every signal by OTLP to otel-lgtm's built-in collector.
+
+discovery.docker "run" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = sys.env("CHAOS_DISCOVERY_INTERVAL")
+  // The app sits on two networks; keep one target per network so the run-network rule below can pick.
+  match_first_network = false
+  filter {
+    name   = "label"
+    values = ["chaos-lab.run-id=" + sys.env("CHAOS_RUN_ID")]
+  }
+}
+
+discovery.relabel "app" {
+  targets = discovery.docker.run.targets
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_role"]
+    regex         = "app"
+    action        = "keep"
+  }
+  rule {
+    source_labels = ["__meta_docker_network_name"]
+    regex         = sys.env("CHAOS_RUN_NETWORK")
+    action        = "keep"
+  }
+  rule {
+    source_labels = ["__meta_docker_port_private"]
+    regex         = sys.env("CHAOS_MGMT_PORT")
+    action        = "keep"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_repeat"]
+    target_label  = "repeat"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_run_id"]
+    target_label  = "run_id"
+  }
+  rule {
+    target_label = "__metrics_path__"
+    replacement  = sys.env("CHAOS_METRICS_PATH")
+  }
+}
+
+prometheus.scrape "app" {
+  targets         = discovery.relabel.app.output
+  scrape_interval = sys.env("CHAOS_SCRAPE_INTERVAL")
+  scrape_timeout  = "900ms"
+  forward_to      = [otelcol.receiver.prometheus.default.receiver]
+}
+
+prometheus.receive_http "k6" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 9999
+  }
+  forward_to = [prometheus.relabel.k6.receiver]
+}
+
+// The OTLP conversion needs job and instance labels, which remote-write samples do not carry.
+prometheus.relabel "k6" {
+  forward_to = [otelcol.receiver.prometheus.default.receiver]
+  rule {
+    target_label = "job"
+    replacement  = "k6"
+  }
+  rule {
+    target_label = "instance"
+    replacement  = "k6"
+  }
+}
+
+otelcol.receiver.prometheus "default" {
+  output {
+    metrics = [otelcol.exporter.otlphttp.lgtm.input]
+  }
+}
+
+discovery.relabel "logs" {
+  targets = discovery.docker.run.targets
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_repeat"]
+    target_label  = "repeat"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_run_id"]
+    target_label  = "run_id"
+  }
+}
+
+loki.source.docker "run" {
+  host             = "unix:///var/run/docker.sock"
+  targets          = discovery.relabel.logs.output
+  refresh_interval = sys.env("CHAOS_DISCOVERY_INTERVAL")
+  forward_to       = [otelcol.receiver.loki.default.receiver]
+}
+
+otelcol.receiver.loki "default" {
+  output {
+    logs = [otelcol.exporter.otlphttp.lgtm.input]
+  }
+}
+
+otelcol.receiver.otlp "app" {
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+  output {
+    metrics = [otelcol.exporter.otlphttp.lgtm.input]
+    logs    = [otelcol.exporter.otlphttp.lgtm.input]
+    traces  = [otelcol.exporter.otlphttp.lgtm.input]
+  }
+}
+
+otelcol.exporter.otlphttp "lgtm" {
+  client {
+    endpoint = "http://lgtm:4318"
+    tls {
+      insecure = true
+    }
+  }
+}

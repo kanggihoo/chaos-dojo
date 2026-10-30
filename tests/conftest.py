@@ -28,9 +28,14 @@ class FakeEngine:
 def repo(tmp_path, monkeypatch):
     """A repo-shaped copy (contract + problems) as the current directory."""
     shutil.copy(ROOT / "chaos-contract.yaml", tmp_path / "chaos-contract.yaml")
+    shutil.copytree(ROOT / "harness", tmp_path / "harness")
     shutil.copytree(ROOT / "problems", tmp_path / "problems",
                     ignore=shutil.ignore_patterns("build", ".gradle", "src"))
     monkeypatch.chdir(tmp_path)
     FakeEngine.instances.clear()
     monkeypatch.setattr("chaos.engine.Engine", FakeEngine)
     return tmp_path
+
+
+def pytest_addoption(parser):
+    parser.addoption("--update-expected", action="store_true", help="rewrite tests/expected files from the generator")

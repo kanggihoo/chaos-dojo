@@ -27,10 +27,12 @@ public class ResolvedSettings {
 
     private final Environment env;
     private final JsonMapper json;
+    private final org.springframework.context.ApplicationContext ctx;
 
-    public ResolvedSettings(Environment env, JsonMapper json) {
+    public ResolvedSettings(Environment env, JsonMapper json, org.springframework.context.ApplicationContext ctx) {
         this.env = env;
         this.json = json;
+        this.ctx = ctx;
     }
 
     public Map<String, Object> resolved() {
@@ -38,6 +40,14 @@ public class ResolvedSettings {
         for (String k : KEYS) m.put(k, env.getProperty(k));
         m.put("java.version", System.getProperty("java.version"));
         m.put("tomcat.version", ServerInfo.getServerNumber());
+        // What the business connector actually runs with, not just what was configured.
+        if (ctx instanceof org.springframework.boot.web.server.context.WebServerApplicationContext w
+                && w.getWebServer() instanceof org.springframework.boot.tomcat.TomcatWebServer t) {
+            var p = (org.apache.coyote.AbstractProtocol<?>) t.getTomcat().getConnector().getProtocolHandler();
+            m.put("actual.business.max-threads", p.getMaxThreads());
+            m.put("actual.business.accept-count", p.getAcceptCount());
+            m.put("actual.business.max-connections", p.getMaxConnections());
+        }
         return m;
     }
 

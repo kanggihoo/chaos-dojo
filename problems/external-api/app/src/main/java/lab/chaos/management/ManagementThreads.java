@@ -1,4 +1,4 @@
-package lab.chaos.orders;
+package lab.chaos.management;
 
 import org.apache.coyote.AbstractProtocol;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +9,7 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 
-/** The management port gets its own small fixed executor, so readiness and metrics survive worker exhaustion. */
+/** Outside the component-scanned package on purpose: it must only reach the management child context. The management port gets its own small fixed executor, so readiness and metrics survive worker exhaustion. */
 @ManagementContextConfiguration(ManagementContextType.CHILD)
 public class ManagementThreads {
     @Bean
@@ -17,7 +17,7 @@ public class ManagementThreads {
         return new Customizer(threads);
     }
 
-    record Customizer(int threads) implements WebServerFactoryCustomizer<TomcatServletWebServerFactory>, Ordered {
+    public record Customizer(int threads) implements WebServerFactoryCustomizer<TomcatServletWebServerFactory>, Ordered {
         @Override
         public void customize(TomcatServletWebServerFactory factory) {
             factory.addConnectorCustomizers(c -> {
