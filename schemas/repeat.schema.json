@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chaos-lab.local/schemas/repeat.schema.json",
+  "title": "chaos-lab repeat result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "n",
+    "verdicts",
+    "phases"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "n": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "verdicts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completion",
+        "validity",
+        "correctness",
+        "slo"
+      ],
+      "properties": {
+        "completion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "reasons"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "met",
+                "missed",
+                "complete",
+                "incomplete",
+                "valid",
+                "invalid",
+                "not-run"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "validity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "reasons"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "met",
+                "missed",
+                "complete",
+                "incomplete",
+                "valid",
+                "invalid",
+                "not-run"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "correctness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "reasons"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "met",
+                "missed",
+                "complete",
+                "incomplete",
+                "valid",
+                "invalid",
+                "not-run"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "slo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "reasons"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "met",
+                "missed",
+                "complete",
+                "incomplete",
+                "valid",
+                "invalid",
+                "not-run"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "phases": {
+      "type": "array"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+schema_version: 1
+run_id: 20261031-120000-external-api-api-slow-naive-a1b2c3
+problem: external-api
+scenario: api-slow
+impl: naive
+exit_code: 3
+repeats:
+  - {n: 1, completion: complete, validity: valid}
+  - {n: 2, completion: not-run, validity: unknown}
+identity: {harness: {commit: abc123, dirty: no}}
+aggregate: {}
+live_status: ok
+cleanup: {ok: true}

@@ -51,9 +51,9 @@ uv run chaos clean --run <run-id>
 
 - [ ] AC-1: 첫 problem의 3개 scenario × 2개 impl, 6개 조합이 모두 `uv run chaos run <problem>/<scenario> --impl <impl>` 하나로 실행되고, 각 run은 repeat 5회를 수행해 새 run 디렉터리와 `report.html`을 남긴다; 명령 형태, 결과 파일 구조, 리포트 레이아웃은 6개 조합에서 같다. (D-2, D-6, D-17, D-19)
 - [ ] AC-2: 모든 명령의 종료 코드는 Interfaces의 종료 코드 표를 따르며, `run`에서는 3이 1보다 우선한다; 불변식 fail, SLO miss, correctness·SLO unknown은 종료 코드를 바꾸지 않는다. (D-6)
-- [ ] AC-3: Interfaces "실행 전 거부" 목록에 해당하는 입력은 이유와 함께 거부되고 exit 2로 끝난다; 이때 컨테이너, 네트워크, 볼륨, lock, 결과 디렉터리는 하나도 만들어지지 않는다. (D-6, D-7, D-9, D-10, D-18)
-- [ ] AC-4: 다른 problem의 manifest가 스키마 위반이어도 정상 problem의 scenario 실행은 그 때문에 막히지 않는다. (D-7)
-- [ ] AC-5: 커밋된 JSON Schema(problem·scenario manifest, impl descriptor, 하네스 계약 파일, 결과 파일)마다 valid/invalid 예시 파일이 있고, 하네스 테스트가 모든 예시를 기대대로 판정한다; 예시에는 `010`(거부), boolean 자리의 `no`·`off`(거부), id 자리의 `no`(허용), 끝에 줄바꿈이 붙은 id(거부)가 포함된다. (D-7)
+- [x] AC-3: Interfaces "실행 전 거부" 목록에 해당하는 입력은 이유와 함께 거부되고 exit 2로 끝난다; 이때 컨테이너, 네트워크, 볼륨, lock, 결과 디렉터리는 하나도 만들어지지 않는다. (D-6, D-7, D-9, D-10, D-18)
+- [x] AC-4: 다른 problem의 manifest가 스키마 위반이어도 정상 problem의 scenario 실행은 그 때문에 막히지 않는다. (D-7)
+- [x] AC-5: 커밋된 JSON Schema(problem·scenario manifest, impl descriptor, 하네스 계약 파일, 결과 파일)마다 valid/invalid 예시 파일이 있고, 하네스 테스트가 모든 예시를 기대대로 판정한다; 예시에는 `010`(거부), boolean 자리의 `no`·`off`(거부), id 자리의 `no`(허용), 끝에 줄바꿈이 붙은 id(거부)가 포함된다. (D-7)
 - [ ] AC-6: `--predict` 파일은 입력 검증 때 한 번 읽어 메모리에 둔다; run 디렉터리를 만들 때 그 내용을 결과에 복사하고 해시를 기록하며, 이 사건은 run 수준 `events.jsonl`에서 어떤 measured load보다 앞선다; 이후 원본은 다시 읽지 않는다; `--predict`가 있든 없든 validity 판정은 같다; 표준 입력이 닫혀 있어도 CLI는 끝까지 동작한다. (D-6)
 - [ ] AC-7: 엔진의 전체 CPU 수나 메모리가 repeat 중 동시에 도는 모든 컨테이너(앱, problem 의존성, impl 추가 의존성, k6, Alloy, otel-lgtm) 예산의 합보다 작으면, lock을 잡은 직후 다른 자원을 만들기 전에 이유를 남기고 lock을 푼 뒤 exit 3으로 끝난다; 예산을 줄여서 실행하지 않는다. (D-14)
 
@@ -88,11 +88,11 @@ uv run chaos clean --run <run-id>
 
 ### 첫 problem 앱
 
-- [ ] AC-28: 앱은 Interfaces의 HTTP 계약과 상태 코드 표의 판정 순서를 그대로 따른다; lookup이 성공하고 짧은 트랜잭션 하나가 commit된 뒤에만 201을 준다; 400·409·502·503·504 응답에서는 새 주문을 저장하지 않는다(409 `duplicate-request`는 이미 저장된 주문만 있다는 뜻이다). (D-18)
-- [ ] AC-29: lookup 호출은 트랜잭션 밖에서, DB 연결을 잡지 않은 채 이루어진다; 요청 하나의 lookup이 지연되는 동안 JDBC pool active 수는 0이다. (D-18)
+- [x] AC-28: 앱은 Interfaces의 HTTP 계약과 상태 코드 표의 판정 순서를 그대로 따른다; lookup이 성공하고 짧은 트랜잭션 하나가 commit된 뒤에만 201을 준다; 400·409·502·503·504 응답에서는 새 주문을 저장하지 않는다(409 `duplicate-request`는 이미 저장된 주문만 있다는 뜻이다). (D-18)
+- [x] AC-29: lookup 호출은 트랜잭션 밖에서, DB 연결을 잡지 않은 채 이루어진다; 요청 하나의 lookup이 지연되는 동안 JDBC pool active 수는 0이다. (D-18)
 - [ ] AC-30: naive와 timeout은 같은 이미지를 쓰고 `impl.yaml`의 환경 변수만 다르다; 결과에 기록된 resolved Tomcat·HTTP client·JDBC 설정은 lookup 대기 정책(`IMPL`과 그 한도)을 빼면 두 impl이 같다; virtual threads는 꺼져 있다(`spring.threads.virtual.enabled=false`); 이미지 ID와 resolved 설정은 run 결과에 기록된다. (D-3, D-8, D-19)
 - [ ] AC-31: naive가 api-slow에서 업무 Tomcat 스레드를 모두 소진한 동안에도 관리 포트의 readiness와 Prometheus 엔드포인트는 응답한다; Interfaces "필수 지표"는 api-slow와 api-down 중에도 수집된다; 내보낸 지표 어디에도 request id 라벨은 없다. (D-8, D-13)
-- [ ] AC-32: readiness는 앱과 DB가 준비됐을 때 성공하고, lookup 상태와는 무관하다; api-down 중에도 성공한다. (D-8)
+- [x] AC-32: readiness는 앱과 DB가 준비됐을 때 성공하고, lookup 상태와는 무관하다; api-down 중에도 성공한다. (D-8)
 
 ### 관측
 

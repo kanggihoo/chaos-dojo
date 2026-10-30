@@ -1,0 +1,7 @@
+reports/
+.venv/
+__pycache__/
+.pytest_cache/
+.hypothesis/
+problems/*/app/build/
+problems/*/app/.gradle/

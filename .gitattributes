@@ -1,0 +1,4 @@
+# Containers read text assets byte for byte on every OS: always LF.
+* text=auto eol=lf
+# Results are evidence: never normalized.
+results/** -text

@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chaos-lab.local/schemas/problem.schema.json",
+  "title": "chaos-lab problem manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "id",
+    "description",
+    "dependencies",
+    "proxy_budget",
+    "openapi",
+    "required_metrics",
+    "inflight_metric",
+    "busy_metric",
+    "store",
+    "invariants",
+    "slo",
+    "recovery"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 40
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "kind",
+          "image",
+          "budget",
+          "port"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "maxLength": 40
+          },
+          "kind": {
+            "enum": [
+              "postgres",
+              "http-fake"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+          },
+          "budget": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cpus",
+              "memory_mib"
+            ],
+            "properties": {
+              "cpus": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "memory_mib": {
+                "type": "integer",
+                "minimum": 16
+              }
+            }
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          },
+          "openapi": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          },
+          "stubs": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "postgres"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "schema"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "http-fake"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "openapi",
+                "stubs"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "proxy_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpus",
+        "memory_mib"
+      ],
+      "properties": {
+        "cpus": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 16
+        }
+      }
+    },
+    "openapi": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    },
+    "required_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_][a-z0-9_]*$"
+      }
+    },
+    "inflight_metric": {
+      "type": "string",
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "busy_metric": {
+      "type": "string",
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "store": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependency",
+        "table",
+        "request_id",
+        "cohort",
+        "fields",
+        "price_field",
+        "price_key"
+      ],
+      "properties": {
+        "dependency": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "maxLength": 40
+        },
+        "table": {
+          "type": "string",
+          "pattern": "^[a-z_][a-z0-9_]*$"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "cohort": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          }
+        },
+        "price_field": {
+          "type": "string"
+        },
+        "price_key": {
+          "type": "string"
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "one-order-per-success",
+          "payload-matches",
+          "no-order-on-failure",
+          "price-matches-stub",
+          "no-foreign-order",
+          "recovers"
+        ]
+      }
+    },
+    "slo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "budget_ms",
+        "success_ratio"
+      ],
+      "properties": {
+        "budget_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "success_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interval_s",
+        "max_s",
+        "consecutive"
+      ],
+      "properties": {
+        "interval_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "consecutive": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

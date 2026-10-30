@@ -1,0 +1,8 @@
+schema_version: 1
+n: 1
+verdicts:
+  completion: {value: complete, reasons: []}
+  validity: {value: invalid, reasons: [dropped_iterations=3]}
+  correctness: {value: unknown, reasons: [no DB snapshot]}
+  slo: {value: missed, reasons: [success ratio 0.71 < 0.99]}
+phases: []

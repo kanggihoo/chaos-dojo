@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chaos-lab.local/schemas/contract.schema.json",
+  "title": "chaos-lab harness contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "repeats",
+    "vu_factor",
+    "images",
+    "budgets",
+    "k6_saturation",
+    "intervals_s",
+    "live",
+    "metrics_missing",
+    "clock_ms",
+    "fault_tolerance_s",
+    "collect_limits_s",
+    "log_cap_bytes"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "repeats": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "vu_factor": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "k6",
+        "toxiproxy",
+        "alloy",
+        "lgtm"
+      ],
+      "properties": {
+        "k6": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+        },
+        "toxiproxy": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+        },
+        "alloy": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+        },
+        "lgtm": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "app",
+        "problem_deps_max",
+        "k6",
+        "alloy",
+        "lgtm"
+      ],
+      "properties": {
+        "app": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpus",
+            "memory_mib"
+          ],
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 16
+            }
+          }
+        },
+        "problem_deps_max": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpus",
+            "memory_mib"
+          ],
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 16
+            }
+          }
+        },
+        "k6": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpus",
+            "memory_mib"
+          ],
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 16
+            }
+          }
+        },
+        "alloy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpus",
+            "memory_mib"
+          ],
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 16
+            }
+          }
+        },
+        "lgtm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpus",
+            "memory_mib"
+          ],
+          "properties": {
+            "cpus": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 16
+            }
+          }
+        }
+      }
+    },
+    "k6_saturation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "window_s",
+        "max_ratio"
+      ],
+      "properties": {
+        "window_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "intervals_s": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scrape",
+        "stats",
+        "discovery"
+      ],
+      "properties": {
+        "scrape": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stats": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "discovery": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "k6_push_s",
+        "k6_push_timeout_s",
+        "annotation_queue",
+        "annotation_timeout_s"
+      ],
+      "properties": {
+        "k6_push_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "k6_push_timeout_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "annotation_queue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "annotation_timeout_s": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "metrics_missing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min_ratio",
+        "max_gap_s"
+      ],
+      "properties": {
+        "min_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_gap_s": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "clock_ms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_offset",
+        "max_drift"
+      ],
+      "properties": {
+        "max_offset": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_drift": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "fault_tolerance_s": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "collect_limits_s": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quiescence",
+        "arrival",
+        "export"
+      ],
+      "properties": {
+        "quiescence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "arrival": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "export": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "log_cap_bytes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "head"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "head": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

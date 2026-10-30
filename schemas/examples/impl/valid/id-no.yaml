@@ -1,0 +1,32 @@
+contract_version: 1
+id: no
+problem: external-api
+description: lookup 응답을 최대 10초까지 기다린다
+image: {build: ../../app}
+ports: {business: 8080, management: 8081}
+readiness_path: /actuator/health/readiness
+metrics_path: /actuator/prometheus
+env:
+  IMPL: naive
+  DB_URL: jdbc:postgresql://${chaos.dep.db.host}:${chaos.dep.db.port}/orders
+  DB_USER: ${chaos.dep.db.user}
+  DB_PASSWORD: ${chaos.dep.db.password}
+  JDBC_POOL_SIZE: "10"
+  JDBC_CONNECTION_TIMEOUT_MS: "5000"
+  LOOKUP_BASE_URL: http://${chaos.dep.lookup.host}:${chaos.dep.lookup.port}
+  LOOKUP_RESPONSE_TIMEOUT_MS: "10000"
+  LOOKUP_CONNECT_TIMEOUT_MS: "1000"
+  HTTP_POOL_MAX: "50"
+  HTTP_POOL_ACQUIRE_TIMEOUT_MS: "2000"
+  TOMCAT_MAX_THREADS: "50"
+  TOMCAT_ACCEPT_COUNT: "100"
+  TOMCAT_MAX_CONNECTIONS: "200"
+  MANAGEMENT_PORT: "8081"
+  MANAGEMENT_THREADS: "4"
+  OTLP_ENDPOINT: ${chaos.otlp.endpoint}
+  TRACE_SAMPLING: "1.0"
+  SERVICE_NAME: orders-naive
+  CHAOS_RUN_ID: ${chaos.run_id}
+  CHAOS_REPEAT: ${chaos.repeat}
+extra_dependencies: []
+provenance: PROVENANCE.md

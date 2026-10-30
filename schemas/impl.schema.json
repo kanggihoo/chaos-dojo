@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chaos-lab.local/schemas/impl.schema.json",
+  "title": "chaos-lab impl descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "id",
+    "problem",
+    "description",
+    "image",
+    "ports",
+    "readiness_path",
+    "metrics_path",
+    "env",
+    "extra_dependencies",
+    "provenance"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 40
+    },
+    "problem": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 40
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\n]*$"
+    },
+    "image": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "build"
+          ],
+          "properties": {
+            "build": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._/-]+$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "digest"
+          ],
+          "properties": {
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "ports": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "business",
+        "management"
+      ],
+      "properties": {
+        "business": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "management": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "readiness_path": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "metrics_path": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "propertyNames": {
+        "pattern": "^[A-Z_][A-Z0-9_]*$"
+      }
+    },
+    "extra_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "kind",
+          "image",
+          "budget",
+          "port"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "maxLength": 40
+          },
+          "kind": {
+            "enum": [
+              "postgres",
+              "http-fake"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9./_-]*(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$"
+          },
+          "budget": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cpus",
+              "memory_mib"
+            ],
+            "properties": {
+              "cpus": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "memory_mib": {
+                "type": "integer",
+                "minimum": 16
+              }
+            }
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          },
+          "openapi": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          },
+          "stubs": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/-]+$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "postgres"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "schema"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "http-fake"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "openapi",
+                "stubs"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "provenance": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    }
+  }
+}

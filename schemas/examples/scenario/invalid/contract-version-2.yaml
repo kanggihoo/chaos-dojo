@@ -1,0 +1,14 @@
+contract_version: 2
+id: api-slow
+problem: external-api
+workload:
+  script: ../../k6/orders.js
+  rate: 50
+  warmup_s: 30
+  measured_s: 120
+  graceful_stop_s: 20
+  timeout_s: 15
+  seed: 42
+faults:
+  - {target: lookup, action: latency, value_ms: 2000, apply_at_s: 40, remove_at_s: 80}
+phase_timeouts_s: {prepare: 300, warmup: 60, measured: 160, recovery: 70, collect: 180, cleanup: 120}

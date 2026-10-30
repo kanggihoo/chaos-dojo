@@ -1,0 +1,41 @@
+contract_version: 1
+id: External-Api
+description: 주문 API가 외부 상품 API에 가격과 재고를 묻는다. 그 API가 느려지거나 죽는다.
+openapi: openapi.yaml
+dependencies:
+  - name: db
+    kind: postgres
+    image: postgres:17@sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f
+    budget: {cpus: 0.5, memory_mib: 512}
+    port: 5432
+    schema: schema.sql
+  - name: lookup
+    kind: http-fake
+    image: wiremock/wiremock:3.13.1@sha256:d61e7720f89483fdef5366843b58d1dfd06bcce5828179c9f2f54de5c28354b0
+    budget: {cpus: 0.25, memory_mib: 384}
+    port: 8080
+    openapi: lookup-openapi.yaml
+    stubs: stubs
+proxy_budget: {cpus: 0.25, memory_mib: 128}
+required_metrics:
+  - http_server_requests_seconds_count
+  - http_client_requests_seconds_count
+  - hikaricp_connections_active
+  - hikaricp_connections_pending
+  - jvm_threads_live_threads
+  - tomcat_threads_busy_threads
+  - tomcat_threads_config_max_threads
+  - chaos_business_inflight
+inflight_metric: chaos_business_inflight
+busy_metric: tomcat_threads_busy_threads
+store:
+  dependency: db
+  table: orders
+  request_id: request_id
+  cohort: cohort
+  fields: {productId: product_id, quantity: quantity, unitPrice: unit_price, total: total, currency: currency}
+  price_field: price
+  price_key: productId
+invariants: [one-order-per-success, payload-matches, no-order-on-failure, price-matches-stub, no-foreign-order, recovers]
+slo: {budget_ms: 500, success_ratio: 0.99}
+recovery: {interval_s: 1, max_s: 60, consecutive: 5}

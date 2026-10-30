@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chaos-lab.local/schemas/scenario.schema.json",
+  "title": "chaos-lab scenario manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "id",
+    "problem",
+    "workload",
+    "faults",
+    "phase_timeouts_s"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 40
+    },
+    "problem": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 40
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "script",
+        "rate",
+        "warmup_s",
+        "measured_s",
+        "graceful_stop_s",
+        "timeout_s",
+        "seed"
+      ],
+      "properties": {
+        "script": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._/-]+$"
+        },
+        "rate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "warmup_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "measured_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "graceful_stop_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeout_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target",
+          "action",
+          "apply_at_s",
+          "remove_at_s"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "maxLength": 40
+          },
+          "action": {
+            "enum": [
+              "latency",
+              "down"
+            ]
+          },
+          "value_ms": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "apply_at_s": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "remove_at_s": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "if": {
+          "properties": {
+            "action": {
+              "const": "latency"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "value_ms"
+          ]
+        }
+      }
+    },
+    "phase_timeouts_s": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prepare",
+        "warmup",
+        "measured",
+        "recovery",
+        "collect",
+        "cleanup"
+      ],
+      "properties": {
+        "prepare": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "warmup": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "measured": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "collect": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cleanup": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}
