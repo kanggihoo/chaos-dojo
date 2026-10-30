@@ -276,7 +276,7 @@ results/<run-id>/
     events.jsonl           단계·장애·경계 사건 (seq, 종류, 계획 시각, 실제 시각, 결과)
     k6/                    k6 원본 결과: 요청별 outcome, request id, cohort, 발행 시각, 응답 시각 (warmup·measured·probe)
     metrics/               내보낸 필수 지표 시계열, Docker stats 시계열
-    logs/<service>.log     repeat 컨테이너 로그 (ANSI 코드 포함 원본 바이트)
+    logs/<service>.log     repeat 컨테이너 로그 (ANSI 코드 포함 원본 바이트. AC-37 금지 문자열만 치환하고 그 횟수를 repeat.json에 기록)
     traces/summary.json    span 수(샘플링·내보냄·버림)와 trace 요약 (진단용)
     wiremock-journal.json  cohort를 구별할 수 있는 journal (진단용)
     checks.json            불변식별 결과(pass/fail/unknown, 위반 목록, ambiguous 목록)
@@ -561,7 +561,7 @@ collect 단계 안에는 하위 한도가 있다: quiescence 30 s, 도착 확인
 | 자원 예산: otel-lgtm | 1.5 CPU / 2 GiB | 하네스 상수 | D-14 |
 | k6 포화 | measured 단계(drain 포함) 안의 어떤 연속 10 s 창에서든, k6 CPU 평균이 k6 예산(실시간 출력 포함)의 70%를 넘음 | 하네스 상수 | D-13, D-15 |
 | 수집 주기 | 스크레이프 1 s, Docker stats 1 s, Alloy 탐색 5 s | 하네스 상수 | D-13 |
-| 실시간 전송 | k6 push 5 s(push timeout 2 s), annotation queue 100건·timeout 2 s | 하네스 상수 | D-13 |
+| 실시간 전송 | k6 push 5 s(push timeout은 k6 기본값. 고정한 k6에는 설정이 없다), annotation queue 100건·timeout 2 s | 하네스 상수 | D-13 |
 | 필수 지표 누락 기준 | 기대 샘플의 95% 미만, 또는 5 s를 넘는 공백 | 하네스 상수 | D-8, D-13 |
 | 시계 | 호스트·엔진 차이 ≤ 100 ms, repeat 중 드리프트 ≤ 50 ms | 하네스 상수 | D-13 |
 | 장애 시각 허용 오차 | 1 s | 하네스 상수 | D-10 |
@@ -575,9 +575,9 @@ collect 단계 안에는 하위 한도가 있다: quiescence 30 s, 도착 확인
 
 | Locator | Action | Obligation | Decision |
 |---|---|---|---|
-| `docs/PLAN.md#Chaos Dojo` | modify | 이번 결정과 어긋나는 내용을 모두 고쳐 쓰고, 세부 규칙은 spec과 decisions.md 링크로 대신한다 | D-1 |
-| `docs/ROADMAP.md#Chaos Dojo` | modify | 용어, 프로젝트 이름, 이번 결정과 어긋나는 내용을 고친다 | D-1 |
-| `README.md#Chaos Dojo` | modify | 프로젝트 이름 `chaos-lab`, 명령, 문서 링크 | D-1 |
+| `docs/PLAN.md#chaos-lab` | modify | 이번 결정과 어긋나는 내용을 모두 고쳐 쓰고, 세부 규칙은 spec과 decisions.md 링크로 대신한다 | D-1 |
+| `docs/ROADMAP.md#chaos-lab` | modify | 용어, 프로젝트 이름, 이번 결정과 어긋나는 내용을 고친다 | D-1 |
+| `README.md#chaos-lab` | modify | 프로젝트 이름 `chaos-lab`, 명령, 문서 링크 | D-1 |
 
 ## Seams & test plan
 
