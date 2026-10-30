@@ -1125,7 +1125,7 @@ class Repeat:
         cut = [q for q in reqs.values() if q["cohort"] == "measured" and q["done"] is None]
         if cut:
             inv.append(f"{len(cut)} measured iterations cut off by gracefulStop")
-        window = (self.t0, self.measured_end) if self.t0 and self.measured_end else None
+        window = (self.t0, self.measured_end) if self.t0 is not None and self.measured_end is not None else None
         if window:
             k6_stats = [dict(s, name="k6") for s in self.stats if s["name"].startswith(f"{self.project}-k6-run-")]
             sat = verdict.saturated(k6_stats, "k6", c["budgets"]["k6"]["cpus"], (window[0], window[1]),

@@ -50,41 +50,41 @@ uv run chaos clean --run <run-id>
 ### CLI와 입력 검증
 
 - [ ] AC-1: 첫 problem의 3개 scenario × 2개 impl, 6개 조합이 모두 `uv run chaos run <problem>/<scenario> --impl <impl>` 하나로 실행되고, 각 run은 repeat 5회를 수행해 새 run 디렉터리와 `report.html`을 남긴다; 명령 형태, 결과 파일 구조, 리포트 레이아웃은 6개 조합에서 같다. (D-2, D-6, D-17, D-19)
-- [ ] AC-2: 모든 명령의 종료 코드는 Interfaces의 종료 코드 표를 따르며, `run`에서는 3이 1보다 우선한다; 불변식 fail, SLO miss, correctness·SLO unknown은 종료 코드를 바꾸지 않는다. (D-6)
+- [x] AC-2: 모든 명령의 종료 코드는 Interfaces의 종료 코드 표를 따르며, `run`에서는 3이 1보다 우선한다; 불변식 fail, SLO miss, correctness·SLO unknown은 종료 코드를 바꾸지 않는다. (D-6)
 - [x] AC-3: Interfaces "실행 전 거부" 목록에 해당하는 입력은 이유와 함께 거부되고 exit 2로 끝난다; 이때 컨테이너, 네트워크, 볼륨, lock, 결과 디렉터리는 하나도 만들어지지 않는다. (D-6, D-7, D-9, D-10, D-18)
 - [x] AC-4: 다른 problem의 manifest가 스키마 위반이어도 정상 problem의 scenario 실행은 그 때문에 막히지 않는다. (D-7)
 - [x] AC-5: 커밋된 JSON Schema(problem·scenario manifest, impl descriptor, 하네스 계약 파일, 결과 파일)마다 valid/invalid 예시 파일이 있고, 하네스 테스트가 모든 예시를 기대대로 판정한다; 예시에는 `010`(거부), boolean 자리의 `no`·`off`(거부), id 자리의 `no`(허용), 끝에 줄바꿈이 붙은 id(거부)가 포함된다. (D-7)
-- [ ] AC-6: `--predict` 파일은 입력 검증 때 한 번 읽어 메모리에 둔다; run 디렉터리를 만들 때 그 내용을 결과에 복사하고 해시를 기록하며, 이 사건은 run 수준 `events.jsonl`에서 어떤 measured load보다 앞선다; 이후 원본은 다시 읽지 않는다; `--predict`가 있든 없든 validity 판정은 같다; 표준 입력이 닫혀 있어도 CLI는 끝까지 동작한다. (D-6)
-- [ ] AC-7: 엔진의 전체 CPU 수나 메모리가 repeat 중 동시에 도는 모든 컨테이너(앱, problem 의존성, impl 추가 의존성, k6, Alloy, otel-lgtm) 예산의 합보다 작으면, lock을 잡은 직후 다른 자원을 만들기 전에 이유를 남기고 lock을 푼 뒤 exit 3으로 끝난다; 예산을 줄여서 실행하지 않는다. (D-14)
+- [x] AC-6: `--predict` 파일은 입력 검증 때 한 번 읽어 메모리에 둔다; run 디렉터리를 만들 때 그 내용을 결과에 복사하고 해시를 기록하며, 이 사건은 run 수준 `events.jsonl`에서 어떤 measured load보다 앞선다; 이후 원본은 다시 읽지 않는다; `--predict`가 있든 없든 validity 판정은 같다; 표준 입력이 닫혀 있어도 CLI는 끝까지 동작한다. (D-6)
+- [x] AC-7: 엔진의 전체 CPU 수나 메모리가 repeat 중 동시에 도는 모든 컨테이너(앱, problem 의존성, impl 추가 의존성, k6, Alloy, otel-lgtm) 예산의 합보다 작으면, lock을 잡은 직후 다른 자원을 만들기 전에 이유를 남기고 lock을 푼 뒤 exit 3으로 끝난다; 예산을 줄여서 실행하지 않는다. (D-14)
 
 ### 환경 생성과 격리
 
 - [ ] AC-8: 각 repeat는 다른 repeat와 겹치지 않는 새 Compose 프로젝트 이름과 새 볼륨으로 실행된다; 결과에 저장된 `compose.yaml`은 Compose에 넘긴 파일과 해시가 같다; 그 파일에 든 경로는 run 디렉터리 기준 상대 경로와 Docker 소켓 경로뿐이다; 모든 입력 마운트는 run의 `inputs/` 스냅샷을 가리킨다. (D-5, D-9, D-16)
-- [ ] AC-9: 다음 repeat의 첫 자원 생성은 이전 repeat의 소유 자원이 모두 삭제된 것을 확인한 뒤에만 일어난다; 삭제에 실패하면 run을 멈추고 그때까지의 결과를 보존한 채 exit 3으로 끝난다. (D-9)
+- [x] AC-9: 다음 repeat의 첫 자원 생성은 이전 repeat의 소유 자원이 모두 삭제된 것을 확인한 뒤에만 일어난다; 삭제에 실패하면 run을 멈추고 그때까지의 결과를 보존한 채 exit 3으로 끝난다. (D-9)
 - [ ] AC-10: 한 엔진에서 run이 진행 중일 때 다른 `chaos run`은 lock 외의 자원을 만들기 전에 exit 3으로 거부된다; 다른 checkout에서 실행한 run도 마찬가지다. (D-9)
 - [ ] AC-11: 정리에 성공한 run은 종료 코드와 상관없이 그 run id 라벨이 붙은 컨테이너, 네트워크, 볼륨, lock을 하나도 남기지 않는다; 정리에 실패한 run은 lock을 남기고, 그다음 `chaos run`은 `chaos clean`을 안내하며 exit 3으로 거부된다. (D-9, D-21)
 - [ ] AC-12: `chaos clean`과 `chaos clean --run <id>`는 Interfaces "clean 규칙"을 따른다; 둘 다 라벨이 없는 자원이나 이 기기에서 살아 있다고 확인된 run의 자원은 지우지 않는다; `--run`은 생존을 확인할 수 없는 run을 사용자가 책임지고 해제하는 수단이다. (D-6, D-9, D-21)
 - [ ] AC-13: 호스트에 `DOCKER_DEFAULT_PLATFORM`, `COMPOSE_FILE`, `COMPOSE_PROFILES`를 설정하거나 현재 디렉터리에 `.env`를 두어도, 생성되거나 사용되는 Compose 구성은 바뀌지 않는다; 시작 때 정한 엔진의 신원과 하위 프로세스에 넘긴 환경 변수 이름은 결과에 기록된다. (D-5, D-9)
-- [ ] AC-14: 저장소에는 OS별 실행 파일·스크립트(`.sh`, `.ps1`, `.bat`, `.cmd`, Gradle wrapper), OS별 설정, OS별 실행 안내가 없다; 하네스 소스에는 `sys.platform`, `os.name`, `platform.system` 같은 OS 판별 분기가 없다; `.gitattributes`는 컨테이너가 읽는 텍스트 asset에 LF를 강제하고 `results/**`를 `-text`로 지정한다; `.gitignore`는 `reports/`를 무시한다. (D-2, D-5)
+- [x] AC-14: 저장소에는 OS별 실행 파일·스크립트(`.sh`, `.ps1`, `.bat`, `.cmd`, Gradle wrapper), OS별 설정, OS별 실행 안내가 없다; 하네스 소스에는 `sys.platform`, `os.name`, `platform.system` 같은 OS 판별 분기가 없다; `.gitattributes`는 컨테이너가 읽는 텍스트 asset에 LF를 강제하고 `results/**`를 `-text`로 지정한다; `.gitignore`는 `reports/`를 무시한다. (D-2, D-5)
 
 ### 실행 단계와 부하
 
-- [ ] AC-15: 모든 repeat는 prepare → warmup → measured load → recovery check → convergence → collect → cleanup 순서로 진행한다; 단계마다 resolved timeout과 실제 시작·종료 시각이 기록된다; 적용되지 않는 단계는 이유와 함께 기록된다(첫 problem의 convergence, baseline의 recovery check); 이미지 빌드·pull은 첫 repeat 전에 하고, 단계 timeout과 별도로 기록된다. (D-11)
-- [ ] AC-16: warmup은 고정 시간이고 `warmup_policy=fixed`로 기록된다; warmup이 끝나면 하네스는 warmup cohort의 quiescence 확인 → orders 테이블 비우기 → WireMock journal 비우기 → 경계 기록 순서로 진행한 뒤 measured load를 시작하고, 각 사건은 그 순서대로 `events.jsonl`에 남는다; quiescence가 30초 안에 확인되지 않으면 그 repeat를 invalid로 기록하고 같은 순서로 나머지 단계를 계속 진행한다. (D-11)
-- [ ] AC-17: measured load는 scenario의 rate로 constant-arrival-rate executor가 건다; `dropped_iterations > 0`이거나 gracefulStop에 잘린 iteration이 있는 repeat는 invalid다; 잘린 iteration과 k6 timeout 요청은 개수와 이유를 기록하되 성공 latency 표본에는 넣지 않는다. (D-11, D-12)
-- [ ] AC-18: Ctrl+C, 장애 적용·해제 API 호출 실패, Docker 엔진 API 호출의 오류 응답(데몬 연결 불가, 컨테이너·네트워크·볼륨의 생성·시작 요청 실패 포함) 중 하나가 일어나면 하네스는 새 부하와 이후 repeat를 멈추고, 부분 결과와 실행하지 않은 repeat를 이유와 함께 기록하고, 소유 자원 정리를 시도하고, 정리 결과까지 담아 `run.json`을 확정한 뒤 그 결과로 `report.html`을 쓰고 exit 3으로 끝난다. (D-11, D-21)
+- [x] AC-15: 모든 repeat는 prepare → warmup → measured load → recovery check → convergence → collect → cleanup 순서로 진행한다; 단계마다 resolved timeout과 실제 시작·종료 시각이 기록된다; 적용되지 않는 단계는 이유와 함께 기록된다(첫 problem의 convergence, baseline의 recovery check); 이미지 빌드·pull은 첫 repeat 전에 하고, 단계 timeout과 별도로 기록된다. (D-11)
+- [x] AC-16: warmup은 고정 시간이고 `warmup_policy=fixed`로 기록된다; warmup이 끝나면 하네스는 warmup cohort의 quiescence 확인 → orders 테이블 비우기 → WireMock journal 비우기 → 경계 기록 순서로 진행한 뒤 measured load를 시작하고, 각 사건은 그 순서대로 `events.jsonl`에 남는다; quiescence가 30초 안에 확인되지 않으면 그 repeat를 invalid로 기록하고 같은 순서로 나머지 단계를 계속 진행한다. (D-11)
+- [x] AC-17: measured load는 scenario의 rate로 constant-arrival-rate executor가 건다; `dropped_iterations > 0`이거나 gracefulStop에 잘린 iteration이 있는 repeat는 invalid다; 잘린 iteration과 k6 timeout 요청은 개수와 이유를 기록하되 성공 latency 표본에는 넣지 않는다. (D-11, D-12)
+- [x] AC-18: Ctrl+C, 장애 적용·해제 API 호출 실패, Docker 엔진 API 호출의 오류 응답(데몬 연결 불가, 컨테이너·네트워크·볼륨의 생성·시작 요청 실패 포함) 중 하나가 일어나면 하네스는 새 부하와 이후 repeat를 멈추고, 부분 결과와 실행하지 않은 repeat를 이유와 함께 기록하고, 소유 자원 정리를 시도하고, 정리 결과까지 담아 `run.json`을 확정한 뒤 그 결과로 `report.html`을 쓰고 exit 3으로 끝난다. (D-11, D-21)
 - [ ] AC-19: api-slow는 lookup 프록시에 latency toxic을 걸고, api-down은 lookup 프록시를 비활성화하며, 둘 다 t0 기준 계획 시각에 적용하고 해제한다; 계획 시각, 실제 시각(Toxiproxy API가 성공을 응답한 시각, 호출 시각도 함께), 결과는 `events.jsonl`에 남는다; 실제 시각이 계획보다 1초 넘게 어긋난 repeat는 invalid다. (D-10, D-19, D-21)
 - [ ] AC-20: baseline을 포함한 모든 scenario에서 앱의 DB 연결과 lookup 연결은 toxic이 없을 때도 Toxiproxy를 거친다; 결과에는 최종 topology와 프록시 버전·설정이 기록된다; 앱 컨테이너와 k6 컨테이너는 Toxiproxy API 포트에 연결할 수 없다; 하네스의 제어·수집 경로는 프록시를 거치지 않는다. (D-10)
-- [ ] AC-21: 단계 timeout을 넘기거나, repeat 안의 컨테이너가 생성·시작된 뒤 준비 상태에 이르지 못하거나 비정상 종료한 repeat는 이유와 함께 incomplete가 되고 그 validity는 unknown이다; 하네스는 그 repeat를 정리하고 다음 repeat로 넘어간다; incomplete repeat가 하나라도 있으면 run은 exit 3으로 끝난다. (D-6, D-11)
+- [x] AC-21: 단계 timeout을 넘기거나, repeat 안의 컨테이너가 생성·시작된 뒤 준비 상태에 이르지 못하거나 비정상 종료한 repeat는 이유와 함께 incomplete가 되고 그 validity는 unknown이다; 하네스는 그 repeat를 정리하고 다음 repeat로 넘어간다; incomplete repeat가 하나라도 있으면 run은 exit 3으로 끝난다. (D-6, D-11)
 
 ### 판정
 
-- [ ] AC-22: 각 repeat에는 completion, measurement validity, correctness, SLO 네 판정이 따로 기록된다; 비교 통계에서 빠지는 것은 complete가 아니거나 valid가 아닌 repeat뿐이고, 빠진 repeat는 이유와 함께 표시된다; correctness나 SLO가 unknown이어도 통계에서 빠지지 않으며, 계산할 수 없는 지표는 그 지표의 n에서만 빠진다. (D-15)
-- [ ] AC-23: SLO는 measured cohort에서 두 조건을 모두 만족할 때만 met이다: (a) 예산 안에 끝난 201 수 ÷ 발행한 measured 요청 수 ≥ 임계값, (b) 201의 p99(nearest-rank) ≤ 예산; 201이 0건이면 p99를 계산하지 않고 missed다; 발행이 0건이거나 필요한 증거가 없으면 unknown이다; 장애 전·중·후 구간 값도 함께 표시되며, 구간은 요청 발행 시각과 실제 장애 적용·해제 시각으로 나눈다. (D-15)
-- [ ] AC-24: 불변식 검사기는 Interfaces "첫 problem 불변식"의 각 위반을 위반으로 보고하고, ambiguous 항목은 따로 센다; 확인된 위반이 하나라도 있으면 다른 증거가 없더라도 correctness는 fail이고 확인된 위반은 각각 기록된다; 확인된 위반이 없고 증거가 완전하면 pass이며 ambiguous 수를 함께 표시한다; 확인된 위반이 없고 증거가 모자라면 unknown이다. (D-20, D-21)
-- [ ] AC-25: 장애가 있는 scenario에서는 Interfaces "recovery 규칙"대로 probe를 보내고 time-to-recovery를 기록한다; 60초 안에 회복하지 않으면 correctness fail이다; probe 요청은 measured 지표와 SLO에서 빠지지만, 불변식 검사에는 자기 cohort로 들어간다. (D-20)
-- [ ] AC-26: Interfaces "measurement validity" 목록 중 하나라도 해당하면 그 repeat는 invalid다; 실시간 사본(k6 remote-write, Grafana annotation)의 실패만으로는 판정이 바뀌지 않고, `live_status=degraded`와 원인만 기록된다; annotation은 `events.jsonl`에 먼저 기록한 뒤 유한한 queue와 timeout으로 비동기 게시하므로, Grafana가 응답하지 않아도 장애 적용·해제 시각은 늦어지지 않는다. (D-12, D-13, D-15, D-21)
-- [ ] AC-27: run 수준 값은 complete이면서 valid인 repeat별 값의 중앙값이다(n이 짝수면 가운데 두 값의 평균); 값에는 "repeat별 p99의 중앙값"처럼 이름이 붙는다; CV는 표본 표준편차 ÷ 평균이며 n<2이거나 평균이 0이면 계산하지 않는다; 요청은 repeat 사이에 합치지 않는다; 리포트는 계획·실행·complete·valid 수, 지표별 집계 n, 제외 이유를 보여 주고, n<5면 "완전한 5회 결과 아님", CV>10%면 "조사 신호"로 표시한다. (D-12)
+- [x] AC-22: 각 repeat에는 completion, measurement validity, correctness, SLO 네 판정이 따로 기록된다; 비교 통계에서 빠지는 것은 complete가 아니거나 valid가 아닌 repeat뿐이고, 빠진 repeat는 이유와 함께 표시된다; correctness나 SLO가 unknown이어도 통계에서 빠지지 않으며, 계산할 수 없는 지표는 그 지표의 n에서만 빠진다. (D-15)
+- [x] AC-23: SLO는 measured cohort에서 두 조건을 모두 만족할 때만 met이다: (a) 예산 안에 끝난 201 수 ÷ 발행한 measured 요청 수 ≥ 임계값, (b) 201의 p99(nearest-rank) ≤ 예산; 201이 0건이면 p99를 계산하지 않고 missed다; 발행이 0건이거나 필요한 증거가 없으면 unknown이다; 장애 전·중·후 구간 값도 함께 표시되며, 구간은 요청 발행 시각과 실제 장애 적용·해제 시각으로 나눈다. (D-15)
+- [x] AC-24: 불변식 검사기는 Interfaces "첫 problem 불변식"의 각 위반을 위반으로 보고하고, ambiguous 항목은 따로 센다; 확인된 위반이 하나라도 있으면 다른 증거가 없더라도 correctness는 fail이고 확인된 위반은 각각 기록된다; 확인된 위반이 없고 증거가 완전하면 pass이며 ambiguous 수를 함께 표시한다; 확인된 위반이 없고 증거가 모자라면 unknown이다. (D-20, D-21)
+- [x] AC-25: 장애가 있는 scenario에서는 Interfaces "recovery 규칙"대로 probe를 보내고 time-to-recovery를 기록한다; 60초 안에 회복하지 않으면 correctness fail이다; probe 요청은 measured 지표와 SLO에서 빠지지만, 불변식 검사에는 자기 cohort로 들어간다. (D-20)
+- [x] AC-26: Interfaces "measurement validity" 목록 중 하나라도 해당하면 그 repeat는 invalid다; 실시간 사본(k6 remote-write, Grafana annotation)의 실패만으로는 판정이 바뀌지 않고, `live_status=degraded`와 원인만 기록된다; annotation은 `events.jsonl`에 먼저 기록한 뒤 유한한 queue와 timeout으로 비동기 게시하므로, Grafana가 응답하지 않아도 장애 적용·해제 시각은 늦어지지 않는다. (D-12, D-13, D-15, D-21)
+- [x] AC-27: run 수준 값은 complete이면서 valid인 repeat별 값의 중앙값이다(n이 짝수면 가운데 두 값의 평균); 값에는 "repeat별 p99의 중앙값"처럼 이름이 붙는다; CV는 표본 표준편차 ÷ 평균이며 n<2이거나 평균이 0이면 계산하지 않는다; 요청은 repeat 사이에 합치지 않는다; 리포트는 계획·실행·complete·valid 수, 지표별 집계 n, 제외 이유를 보여 주고, n<5면 "완전한 5회 결과 아님", CV>10%면 "조사 신호"로 표시한다. (D-12)
 
 ### 첫 problem 앱
 
@@ -105,9 +105,9 @@ uv run chaos clean --run <run-id>
 ### 결과와 리포트
 
 - [ ] AC-38: 각 run은 `results/` 아래에 배타적으로 새로 만든 디렉터리를 가진다; 이름이 겹치면 덮어쓰지 않고 새 무작위 접미사로 다시 만든다; 결과에는 Interfaces "신원 정보" 항목이 모두 있다; dirty 상태는 결과와 리포트에 표시된다; `results/`, `reports/`, `.wf-grill/`은 빌드 입력과 dirty 스냅샷에서 빠진다. (D-16)
-- [ ] AC-39: `chaos report`는 저장된 결과 파일만 읽고 결과 디렉터리를 바꾸지 않는다; 출력은 새 파일 `reports/<YYYYMMDD-HHMMSS>-<무작위>.html`에 쓰고 그 경로를 출력한다; 부분 run(exit 3)의 결과도 읽는다; 같은 scenario이면서 비교 신원이 같은 run끼리만 한 페이지로 비교한다; 환경 신원만 다르면 비교를 거부하지만, `--allow-cross-env`를 주면 승자나 순위 없이 나란히 보여 준다; 그 밖의 신원이 다르면 언제나 거부한다. (D-17)
-- [ ] AC-40: 리포트는 모든 scenario에서 같은 레이아웃이다; problem별 항목은 공통 항목 배열로 표시하고, 해당 없는 항목은 그렇다고 표시한다; 예측이 있으면 결과와 함께 보여 준다; impl의 `description`과 추가 의존성을 비교 변수와 그 비용으로 보여 준다; repeat별 관측 스택 자원 사용량과 "관측 스택은 run 동안 유지됨"이라는 한계를 표시한다; 재현 명령에는 절대 경로나 셸 문법이 없다; 생성 시각, 무작위 값, 현재 저장소 상태처럼 결과 파일 밖의 값은 HTML에 넣지 않는다. (D-17)
-- [ ] AC-41: 결과 파일은 자기 스키마 버전을 담는다; 리포트는 지금까지 공개된 모든 결과 스키마 버전을 읽는다(이번 iteration에서는 버전 1 하나). (D-6, D-7)
+- [x] AC-39: `chaos report`는 저장된 결과 파일만 읽고 결과 디렉터리를 바꾸지 않는다; 출력은 새 파일 `reports/<YYYYMMDD-HHMMSS>-<무작위>.html`에 쓰고 그 경로를 출력한다; 부분 run(exit 3)의 결과도 읽는다; 같은 scenario이면서 비교 신원이 같은 run끼리만 한 페이지로 비교한다; 환경 신원만 다르면 비교를 거부하지만, `--allow-cross-env`를 주면 승자나 순위 없이 나란히 보여 준다; 그 밖의 신원이 다르면 언제나 거부한다. (D-17)
+- [x] AC-40: 리포트는 모든 scenario에서 같은 레이아웃이다; problem별 항목은 공통 항목 배열로 표시하고, 해당 없는 항목은 그렇다고 표시한다; 예측이 있으면 결과와 함께 보여 준다; impl의 `description`과 추가 의존성을 비교 변수와 그 비용으로 보여 준다; repeat별 관측 스택 자원 사용량과 "관측 스택은 run 동안 유지됨"이라는 한계를 표시한다; 재현 명령에는 절대 경로나 셸 문법이 없다; 생성 시각, 무작위 값, 현재 저장소 상태처럼 결과 파일 밖의 값은 HTML에 넣지 않는다. (D-17)
+- [x] AC-41: 결과 파일은 자기 스키마 버전을 담는다; 리포트는 지금까지 공개된 모든 결과 스키마 버전을 읽는다(이번 iteration에서는 버전 1 하나). (D-6, D-7)
 
 ### 문서와 완료
 

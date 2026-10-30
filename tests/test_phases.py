@@ -79,3 +79,81 @@ def test_annotations_never_delay_fault_actions(tmp_path, monkeypatch):
     assert run.live["status"] == "degraded"
     kinds = [json.loads(l)["kind"] for l in (tmp_path / "events.jsonl").read_text().splitlines()]
     assert kinds == ["fault-apply", "fault-remove"]
+
+
+def validity_repeat(tmp_path, **kw):
+    rp = runner.Repeat.__new__(runner.Repeat)
+    rp.rd, rp.n, rp.project, rp.invalid = tmp_path, 1, "chaos-x-r1", []
+    r = rp.r = Stub()
+    r.scenario = {"workload": {"graceful_stop_s": 20}, "faults": [{"target": "lookup"}]}
+    r.problem = {"required_metrics": []}
+    r.contract = {"budgets": {"k6": {"cpus": 2}}, "k6_saturation": {"window_s": 10, "max_ratio": 0.7}, "intervals_s": {"scrape": 1},
+                  "metrics_missing": {"min_ratio": 0.95, "max_gap_s": 5}, "clock_ms": {"max_offset": 100, "max_drift": 50},
+                  "fault_tolerance_s": 1}
+    rp.t0, rp.measured_end, rp.offset = 0, 60_000, 0
+    rp.stats = [{"t": t, "name": "chaos-x-r1-k6-run-abc", "cpu": 50.0} for t in range(0, 60_001, 1000)]
+    rp.exported = {"up": []}
+    rp.extra = {"clock_start": {"offset_ms": 10}, "clock_end": {"offset_ms": 20}}
+    rp.faults = [{"kind": "fault-apply", "target": "lookup", "planned_ms": 40_000, "confirmed_ms": 40_010},
+                 {"kind": "fault-remove", "target": "lookup", "planned_ms": 80_000, "confirmed_ms": 80_010}]
+    (tmp_path / "k6").mkdir()
+    (tmp_path / "k6/measured-summary.json").write_text(json.dumps({"metrics": {"dropped_iterations": {"count": kw.get("dropped", 0)}}}))
+    for f in ("compose.yaml", "events.jsonl", "k6/measured.jsonl"):
+        (tmp_path / f).write_text("")
+    for k, v in kw.items():
+        if k != "dropped":
+            setattr(rp, k, v)
+    return rp
+
+
+def test_validity_clean(tmp_path):
+    assert validity_repeat(tmp_path).validity_reasons({}) == []
+
+
+def test_validity_reasons_each(tmp_path):
+    reqs = {"a": {"cohort": "measured", "done": None}}
+    rp = validity_repeat(tmp_path, dropped=3)
+    rp.faults[1]["confirmed_ms"] = 81_500
+    rp.extra["clock_end"] = {"offset_ms": 140}
+    rp.stats = [dict(s, cpu=160.0) for s in rp.stats]
+    out = rp.validity_reasons(reqs)
+    for frag in ("dropped_iterations=3", "1 measured iterations cut off", "k6 saturated", "fault-remove on lookup confirmed 1500 ms",
+                 "clock offset above 100", "clock drift above 50"):
+        assert any(frag in r for r in out), (frag, out)
+
+
+def test_validity_without_k6_cpu_evidence(tmp_path):
+    rp = validity_repeat(tmp_path, stats=[])
+    assert any("k6 CPU usage unavailable" in r for r in rp.validity_reasons({}))
+
+
+def test_unconfirmed_fault_is_invalid(tmp_path):
+    rp = validity_repeat(tmp_path)
+    rp.faults = rp.faults[:1]
+    assert any("not every planned fault" in r for r in rp.validity_reasons({}))
+
+
+def test_container_exit_before_ready_is_incomplete(monkeypatch):
+    rp = runner.Repeat.__new__(runner.Repeat)
+    rp.project, rp.file = "chaos-x-r1", "repeats/1/compose.yaml"
+    rp.eng = Stub()
+    rp.eng.text = lambda *a: "exited 137"
+    import pytest
+    with pytest.raises(runner.Incomplete, match="exited abnormally"):
+        rp.ready(runner.now() + 5000, "app", 8081, lambda a: True)
+
+
+def test_dirty_tree_rules(tmp_path):
+    import subprocess as sp
+    g = lambda *a: sp.run(["git", *a], cwd=tmp_path, capture_output=True, check=True)  # noqa: E731
+    g("init", "-q")
+    g("-c", "user.email=a@b", "-c", "user.name=a", "commit", "-q", "--allow-empty", "-m", "x")
+    for d in ("results", "reports", ".wf-grill", "problems/p/app"):
+        (tmp_path / d).mkdir(parents=True)
+        (tmp_path / d / "f.txt").write_text("x")
+    h = runner.harness_git(tmp_path)
+    assert h["dirty"] is False  # results/, reports/, .wf-grill/ and problems/ never make the harness dirty
+    (tmp_path / "chaos.py").write_text("x")
+    assert runner.harness_git(tmp_path)["dirty"] is True
+    b = runner.build_git(tmp_path, "problems/p/app")
+    assert b["dirty"] and "untracked problems/p/app/f.txt" in b["patch"]
