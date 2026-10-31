@@ -763,19 +763,21 @@ class Repeat:
 
         def read():
             for line in self.k6.stdout:
-                self.k6_log.write(line.encode("utf-8", "replace"))
                 if line.startswith("{"):
                     try:
                         rec = json.loads(line)
                     except ValueError:
+                        self.k6_log.write(line.encode("utf-8", "replace"))
                         continue
-                    self.k6_raw.write(line)
+                    self.k6_raw.write(line)  # record lines live only here; logs/k6-<phase>.log keeps the rest of the stream
                     if rec.get("k") in ("issue", "done"):
                         self.records.append(rec)
                     if on_record:
                         on_record(rec)
-                elif "Failed to send the time series" in line:
-                    self.r.degrade("k6 remote-write push failed")
+                else:
+                    self.k6_log.write(line.encode("utf-8", "replace"))
+                    if "Failed to send the time series" in line:
+                        self.r.degrade("k6 remote-write push failed")
             self.k6_log.close()
             self.k6_raw.close()
         self.k6_reader = threading.Thread(target=read, daemon=True)
