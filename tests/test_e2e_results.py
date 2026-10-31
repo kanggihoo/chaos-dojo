@@ -115,7 +115,7 @@ def test_impls_differ_only_in_wait_policy():
     for run in runs():
         r = j(run / "run.json")
         rep = next((run / "repeats" / str(x["n"]) for x in r["repeats"] if x["completion"] == "complete"), None)
-        if rep:
+        if rep and r["identity"]["images"]["app"].get("build_flags"):  # runs before reproducible builds cannot share an ID
             by_impl[r["impl"]] = (j(rep / "repeat.json")["app"], r["identity"]["images"]["app"]["image_id"])
     if len(by_impl) < 2:
         pytest.skip("needs runs of both impls")

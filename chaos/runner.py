@@ -477,13 +477,15 @@ class Run:
             self.image_volumes[ref] = list((img["Config"].get("Volumes") or {}).keys())
         ctx_rel = (self.spec["impl_dir"] / self.impl["image"]["build"]).resolve().relative_to(self.root.resolve()).as_posix()
         ctx_snapshot = self.dir / "inputs" / "problems" / self.problem["id"] / Path(ctx_rel).relative_to(f"problems/{self.problem['id']}")
-        r = self.eng.docker("build", "-q", str(ctx_snapshot), timeout=1800)
+        # Reproducible build: same sources give the same image ID, so every impl of a problem runs one identical image.
+        build_flags = ["--provenance=false", "--sbom=false", "--build-arg", "SOURCE_DATE_EPOCH=0"]
+        r = self.eng.docker("build", "-q", *build_flags, str(ctx_snapshot), timeout=1800)
         app_id = r.stdout.decode().strip().splitlines()[-1]
         img = self.eng.json("image", "inspect", app_id)[0]
         bg = build_git(self.root, ctx_rel)
         if bg["patch"]:
             (self.dir / "inputs" / "app-dirty.patch").write_text(bg["patch"], encoding="utf-8")
-        images["app"] = {"image_id": app_id, "platform": f"{img['Os']}/{img['Architecture']}", "commit": bg["commit"],
+        images["app"] = {"image_id": app_id, "platform": f"{img['Os']}/{img['Architecture']}", "commit": bg["commit"], "build_flags": build_flags,
                          "dirty": bg["dirty"], "build_input_sha256": hash_closure([ctx_snapshot]),
                          "dirty_patch": "inputs/app-dirty.patch" if bg["patch"] else None}
         self.app_image = app_id
