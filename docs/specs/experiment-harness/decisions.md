@@ -99,7 +99,7 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: [0001](../../adr/0001-pro
 ## D-19 First problem: scenarios and impls
 - Status: settled
 - Decision: Three scenarios (baseline, api-slow, api-down) share workload and topology; two impls in one image, `naive` with a long explicit lookup limit and `timeout` with a short deadline; numbers in the spec.
-- Rejected: naive with library-default infinite timeout → k6 cuts requests first and censors latency · baseline taken from the pre-fault window → time and warmup effects mix in
+- Rejected: naive with library-default infinite timeout → k6 cuts requests first and censors latency · baseline taken from the pre-fault window → time and warmup effects mix in · api-slow latency on the downstream (response) stream → with the pinned Toxiproxy, a client that abandons the call (the timeout impl at 300 ms) strands a delayed chunk and the toxic can never be removed; latency on the request stream delays the response by the same 2 s without that hang
 
 ## D-20 First problem: invariants and recovery
 - Status: settled

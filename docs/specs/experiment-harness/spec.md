@@ -540,7 +540,7 @@ collect 단계 안에는 하위 한도가 있다: quiescence 30 s, 도착 확인
 | 부하 | constant-arrival-rate 50 req/s, iteration당 요청 1개 | scenario | D-12, D-19 |
 | warmup / measured | 30 s / 120 s, 같은 rate | scenario | D-11 |
 | 장애 구간 | t0 + 40 s 적용, t0 + 80 s 해제 | scenario | D-19 |
-| api-slow toxic | lookup 프록시 downstream latency 2,000 ms | scenario | D-19 |
+| api-slow toxic | lookup 프록시 upstream(요청 방향) latency 2,000 ms | scenario | D-19 |
 | 응답 예산 (SLO) | 500 ms. 예산 내 201 비율 ≥ 0.99, 201 p99 ≤ 500 ms. 두 impl 공통 | problem | D-15 |
 | naive lookup 응답 대기 한도 | 10,000 ms | impl | D-19 |
 | timeout lookup | 전체 호출 기한 300 ms(pool 획득 + 연결 + 응답), 응답 대기 한도 300 ms | impl | D-19 |
