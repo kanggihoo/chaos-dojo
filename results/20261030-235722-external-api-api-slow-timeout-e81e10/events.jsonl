@@ -1,0 +1,6 @@
+{"seq": 1, "kind": "images-start", "at": "2026-10-30T23:57:23.025Z"}
+{"seq": 2, "kind": "images-ready", "at": "2026-10-30T23:58:43.045Z", "duration_ms": 80020}
+{"seq": 3, "kind": "obs-start", "at": "2026-10-30T23:58:43.048Z"}
+{"seq": 4, "kind": "obs-ready", "at": "2026-10-30T23:58:53.015Z"}
+{"seq": 5, "kind": "run-stopped", "at": "2026-10-31T00:01:11.726Z", "reason": "fault remove on lookup failed: timed out"}
+{"seq": 6, "kind": "obs-removed", "at": "2026-10-31T00:01:12.764Z", "left": []}

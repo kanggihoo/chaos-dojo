@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "n": 5,
+  "verdicts": {
+    "completion": {
+      "value": "complete",
+      "reasons": []
+    },
+    "validity": {
+      "value": "valid",
+      "reasons": []
+    },
+    "correctness": {
+      "value": "pass",
+      "reasons": []
+    },
+    "slo": {
+      "budget_ms": 500,
+      "threshold": 0.99,
+      "value": "missed",
+      "reasons": [
+        "in-budget 201 ratio 0.6652 < 0.99"
+      ],
+      "in_budget_ratio": 0.6651666666666667,
+      "issued": 6000,
+      "status_201": 3991,
+      "in_budget_201": 3991,
+      "k6_timeouts": 0,
+      "client_errors": 0,
+      "cut_off": 0,
+      "p99_201_ms": 102.0,
+      "p50_201_ms": 6.0,
+      "segments": {
+        "before": {
+          "issued": 2001,
+          "status_201": 1999,
+          "in_budget_201": 1999,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 72.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.999000499750125
+        },
+        "during": {
+          "issued": 2000,
+          "status_201": 10,
+          "in_budget_201": 10,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 296.0,
+          "p50_201_ms": 172.0,
+          "in_budget_ratio": 0.005
+        },
+        "after": {
+          "issued": 1999,
+          "status_201": 1982,
+          "in_budget_201": 1982,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 113.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.991495747873937
+        }
+      }
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793407280532.5361,
+    "time_to_recovery_ms": 992.36376953125,
+    "probes_counted": 5
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-31T00:39:06.962Z",
+      "end": "2026-10-31T00:39:27.363Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-31T00:39:27.364Z",
+      "end": "2026-10-31T00:39:59.890Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-31T00:39:59.890Z",
+      "end": "2026-10-31T00:42:00.581Z"
+    },
+    {
+      "name": "recovery",
+      "timeout_s": 70,
+      "start": "2026-10-31T00:42:00.582Z",
+      "end": "2026-10-31T00:42:01.188Z"
+    },
+    {
+      "name": "convergence",
+      "timeout_s": null,
+      "start": "2026-10-31T00:42:01.189Z",
+      "not_applicable": "not applicable: the problem declares no convergence check",
+      "end": "2026-10-31T00:42:01.190Z"
+    },
+    {
+      "name": "collect",
+      "timeout_s": 180,
+      "start": "2026-10-31T00:42:01.190Z",
+      "end": "2026-10-31T00:42:10.557Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-10-31T00:42:10.558Z",
+      "end": "2026-10-31T00:42:12.935Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": 1793407200521.9,
+  "measured_end_ms": 1793407320571.199,
+  "boundary_ms": 1793407199889.89,
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-10-31T00:40:40.530Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793407240521.9,
+      "dispatched_ms": 1793407240527.0872,
+      "confirmed_ms": 1793407240530.372,
+      "result": "ok"
+    },
+    {
+      "seq": 13,
+      "kind": "fault-remove",
+      "at": "2026-10-31T00:41:20.532Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793407280521.9,
+      "dispatched_ms": 1793407280524.315,
+      "confirmed_ms": 1793407280532.5361,
+      "result": "ok"
+    }
+  ],
+  "values": {
+    "in_budget_ratio": 0.6651666666666667,
+    "p99_201_ms": 102.0,
+    "p50_201_ms": 6.0,
+    "time_to_recovery_ms": 992.36376953125,
+    "ambiguous": 0,
+    "violations": 0
+  },
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 6.57,
+      "cpu_max_pct": 28.54
+    },
+    "alloy": {
+      "cpu_mean_pct": 1.82,
+      "cpu_max_pct": 10.23
+    }
+  },
+  "compose_sha256": "3b01939527f17ca073b7f4e6ba423d9918a7c088c3806183495c050e97a6d436",
+  "clock_start": {
+    "offset_ms": 29.1,
+    "rtt_ms": 68.4
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-a9eb21-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:839ff5a5812aa2e9d550f0b41482eaf4c47cfff128e14ce68315f3eb3a294199",
+    "resolved": {
+      "chaos.impl": "timeout",
+      "chaos.lookup.response-timeout-ms": "300",
+      "chaos.lookup.deadline-ms": "300",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "clock_end": {
+    "offset_ms": 29.3,
+    "rtt_ms": 77.2
+  },
+  "log_truncation": {},
+  "cohorts": {
+    "warmup": 1500,
+    "measured": 6000,
+    "probe": 6
+  },
+  "latency": {
+    "issued": 6000,
+    "status_201": 3991,
+    "in_budget_201": 3991,
+    "k6_timeouts": 0,
+    "client_errors": 0,
+    "cut_off": 0,
+    "p99_201_ms": 102.0,
+    "p50_201_ms": 6.0
+  }
+}

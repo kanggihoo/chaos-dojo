@@ -1,0 +1,21 @@
+{
+  "invariants": [
+    "one-order-per-success",
+    "payload-matches",
+    "no-order-on-failure",
+    "price-matches-stub",
+    "no-foreign-order",
+    "recovers"
+  ],
+  "result": "pass",
+  "violations": [],
+  "ambiguous": [],
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793407280532.5361,
+    "time_to_recovery_ms": 992.36376953125,
+    "probes_counted": 5
+  },
+  "rollbacks_recorded": []
+}

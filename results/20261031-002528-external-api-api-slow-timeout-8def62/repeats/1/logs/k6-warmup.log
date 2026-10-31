@@ -1,0 +1,24 @@
+ Container chaos-a9eb21-r1-k6-run-bdbe748af835 Creating 
+ Container chaos-a9eb21-r1-k6-run-bdbe748af835 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=3.39ms med=7.65ms p(99)=357.6ms  max=553.21ms
+      { expected_response:true }...: min=3.39ms med=6.72ms p(99)=208.04ms max=335.45ms
+    http_req_failed................: 17.58% 264 out of 1501
+    http_reqs......................: 1501   49.954122/s
+
+    EXECUTION
+    iteration_duration.............: min=3.78ms med=8.7ms  p(99)=358.29ms max=555.27ms
+    iterations.....................: 1501   49.954122/s
+    vus............................: 0      min=0           max=18 
+    vus_max........................: 900    min=900         max=900
+
+    NETWORK
+    data_received..................: 425 kB 14 kB/s
+    data_sent......................: 350 kB 12 kB/s
+
+
+

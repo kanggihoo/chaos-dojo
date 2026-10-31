@@ -1,0 +1,24 @@
+ Container chaos-a9eb21-r3-k6-run-062f76d11aa6 Creating 
+ Container chaos-a9eb21-r3-k6-run-062f76d11aa6 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=2.82ms med=6.98ms p(99)=307.97ms max=453.87ms
+      { expected_response:true }...: min=2.82ms med=5.5ms  p(99)=90.74ms  max=313.03ms
+    http_req_failed................: 33.37% 2006 out of 6010
+    http_reqs......................: 6010   50.077296/s
+
+    EXECUTION
+    iteration_duration.............: min=3.45ms med=8.21ms p(99)=309.57ms max=8.99s   
+    iterations.....................: 6002   50.010638/s
+    vus............................: 0      min=0            max=16 
+    vus_max........................: 901    min=901          max=901
+
+    NETWORK
+    data_received..................: 1.8 MB 15 kB/s
+    data_sent......................: 1.4 MB 12 kB/s
+
+
+

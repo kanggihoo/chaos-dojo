@@ -1,0 +1,5 @@
+{"seq": 1, "kind": "images-start", "at": "2026-10-31T00:23:51.268Z"}
+{"seq": 2, "kind": "images-ready", "at": "2026-10-31T00:25:11.759Z", "duration_ms": 80491}
+{"seq": 3, "kind": "obs-start", "at": "2026-10-31T00:25:11.762Z"}
+{"seq": 4, "kind": "run-stopped", "at": "2026-10-31T00:25:26.785Z", "reason": "harness error: TimeoutError: timed out"}
+{"seq": 5, "kind": "obs-removed", "at": "2026-10-31T00:25:28.072Z", "left": []}

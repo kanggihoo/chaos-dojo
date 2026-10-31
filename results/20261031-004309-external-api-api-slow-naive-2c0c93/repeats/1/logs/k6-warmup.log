@@ -1,0 +1,24 @@
+ Container chaos-d42bc5-r1-k6-run-edd2ac9d12f2 Creating 
+ Container chaos-d42bc5-r1-k6-run-edd2ac9d12f2 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=3.2ms  med=6.41ms p(99)=1.04s max=1.34s
+      { expected_response:true }...: min=3.2ms  med=6.41ms p(99)=1.04s max=1.34s
+    http_req_failed................: 0.00%  0 out of 1500
+    http_reqs......................: 1500   49.994315/s
+
+    EXECUTION
+    iteration_duration.............: min=3.72ms med=7.31ms p(99)=1.04s max=1.35s
+    iterations.....................: 1500   49.994315/s
+    vus............................: 1      min=1         max=41 
+    vus_max........................: 900    min=900       max=900
+
+    NETWORK
+    data_received..................: 410 kB 14 kB/s
+    data_sent......................: 350 kB 12 kB/s
+
+
+

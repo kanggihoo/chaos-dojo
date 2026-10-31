@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "n": 3,
+  "verdicts": {
+    "completion": {
+      "value": "incomplete",
+      "reasons": [
+        "run stopped: "
+      ]
+    },
+    "validity": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "correctness": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "slo": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-30T23:55:49.014Z",
+      "end": "2026-10-30T23:56:14.401Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-30T23:56:14.402Z",
+      "end": "2026-10-30T23:56:47.345Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-30T23:56:47.345Z",
+      "end": "2026-10-30T23:57:11.856Z"
+    }
+  ],
+  "faults": [],
+  "compose_sha256": "0a8a133fb8786884b2c0ddff0e934a767372dfab4f0209690a05c0e31da91c48",
+  "clock_start": {
+    "offset_ms": 24.9,
+    "rtt_ms": 75.8
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-353870-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:22e1e4ff147d134d8d0cf4554a8bb12e86a30cba207a3d87aedeaf13520dcfb9",
+    "resolved": {
+      "chaos.impl": "naive",
+      "chaos.lookup.response-timeout-ms": "10000",
+      "chaos.lookup.deadline-ms": "0",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "log_truncation": {}
+}

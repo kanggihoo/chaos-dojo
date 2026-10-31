@@ -1,0 +1,96 @@
+{
+    "metrics": {
+        "http_req_connecting": {
+            "p(99)": 11217.752626070001,
+            "max": 11240.682876,
+            "min": 0,
+            "med": 0.1593155
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 13767.876667,
+            "min": 2.531544,
+            "med": 5.189258,
+            "p(99)": 10033.28643208
+        },
+        "http_req_sending": {
+            "min": 0,
+            "med": 0.049001,
+            "p(99)": 0.16431112999999992,
+            "max": 1.479235
+        },
+        "http_req_waiting": {
+            "min": 0,
+            "med": 4.9874005,
+            "p(99)": 12941.48776332,
+            "max": 13993.384919
+        },
+        "http_req_duration": {
+            "min": 0,
+            "med": 5.161611499999999,
+            "p(99)": 12941.56273719,
+            "max": 13993.404919
+        },
+        "http_reqs": {
+            "count": 6008,
+            "rate": 50.062811219853636
+        },
+        "http_req_failed": {
+            "passes": 529,
+            "fails": 5479,
+            "value": 0.08804926764314247
+        },
+        "data_received": {
+            "rate": 12499.029089042815,
+            "count": 1499999
+        },
+        "http_req_receiving": {
+            "max": 5.616348,
+            "min": 0,
+            "med": 0.065918,
+            "p(99)": 0.65491638
+        },
+        "http_req_blocked": {
+            "min": 0,
+            "med": 0.217774,
+            "p(99)": 11217.82311632,
+            "max": 11240.749084
+        },
+        "iterations": {
+            "count": 6002,
+            "rate": 50.012815070166695
+        },
+        "vus": {
+            "min": 0,
+            "max": 678,
+            "value": 0
+        },
+        "vus_max": {
+            "value": 901,
+            "min": 901,
+            "max": 901
+        },
+        "data_sent": {
+            "count": 1344728,
+            "rate": 11205.203729369397
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "p(99)": 0,
+            "max": 0
+        },
+        "iteration_duration": {
+            "p(99)": 15003.35985891,
+            "max": 15009.955685,
+            "min": 3.050137,
+            "med": 6.474384499999999
+        }
+    },
+    "root_group": {
+        "groups": {},
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+}

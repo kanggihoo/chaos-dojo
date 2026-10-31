@@ -1,0 +1,61 @@
+name: chaos-d42bc5-obs
+services:
+  alloy:
+    image: grafana/alloy:v1.11.0@sha256:e849f170152aff2015427908463a08c48416abade66302cd880379609058042b
+    labels:
+      chaos-lab.run-id: 20261031-004309-external-api-api-slow-naive-2c0c93
+      chaos-lab.role: alloy
+    networks:
+    - run
+    command:
+    - run
+    - /etc/alloy/config.alloy
+    - --storage.path=/var/lib/alloy/data
+    - --server.http.listen-addr=0.0.0.0:12345
+    environment:
+      CHAOS_RUN_ID: 20261031-004309-external-api-api-slow-naive-2c0c93
+      CHAOS_RUN_NETWORK: chaos-d42bc5-run
+      CHAOS_MGMT_PORT: '8081'
+      CHAOS_METRICS_PATH: /actuator/prometheus
+      CHAOS_SCRAPE_INTERVAL: 1s
+      CHAOS_DISCOVERY_INTERVAL: 5s
+    volumes:
+    - ./inputs/harness/alloy/config.alloy:/etc/alloy/config.alloy:ro
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    cpus: '0.5'
+    mem_limit: 512m
+    logging:
+      driver: json-file
+  lgtm:
+    image: grafana/otel-lgtm:0.11.10@sha256:09d8c3ce4f3a5f2f5b1ef7a3cc526a7e03b608aeef3ea1c67c912df43b2690c9
+    labels:
+      chaos-lab.run-id: 20261031-004309-external-api-api-slow-naive-2c0c93
+      chaos-lab.role: lgtm
+    networks:
+    - run
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ADMIN_PASSWORD: ${CHAOS_GF_PASSWORD}
+      GF_AUTH_DISABLE_LOGIN_FORM: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_PLUGINS_PREINSTALL_DISABLED: 'true'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+    ports:
+    - 127.0.0.1::3000
+    - 127.0.0.1::9090
+    - 127.0.0.1::3200
+    volumes:
+    - ./inputs/harness/grafana/provider.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/chaos-lab.yaml:ro
+    - ./inputs/harness/grafana/dashboard.json:/chaos/dashboard.json:ro
+    cpus: '1.5'
+    mem_limit: 2048m
+    logging:
+      driver: json-file
+networks:
+  run:
+    name: chaos-d42bc5-run
+    labels:
+      chaos-lab.run-id: 20261031-004309-external-api-api-slow-naive-2c0c93
+      chaos-lab.role: network

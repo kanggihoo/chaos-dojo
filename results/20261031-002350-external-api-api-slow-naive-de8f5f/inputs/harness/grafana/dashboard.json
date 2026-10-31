@@ -1,0 +1,358 @@
+{
+ "uid": "chaos-lab",
+ "title": "chaos-lab",
+ "schemaVersion": 39,
+ "time": {
+  "from": "now-15m",
+  "to": "now"
+ },
+ "refresh": "5s",
+ "description": "Live view only. Verdicts come from the exported result files, never from this dashboard. k6 percentiles here are estimates.",
+ "templating": {
+  "list": [
+   {
+    "name": "run_id",
+    "type": "query",
+    "datasource": {
+     "type": "prometheus",
+     "uid": "prometheus"
+    },
+    "query": {
+     "query": "label_values(up, run_id)",
+     "refId": "q"
+    },
+    "refresh": 2
+   },
+   {
+    "name": "repeat",
+    "type": "query",
+    "datasource": {
+     "type": "prometheus",
+     "uid": "prometheus"
+    },
+    "query": {
+     "query": "label_values(up{run_id=\"$run_id\"}, repeat)",
+     "refId": "q"
+    },
+    "refresh": 2,
+    "includeAll": true,
+    "multi": true,
+    "allValue": ".*",
+    "current": {
+     "text": "All",
+     "value": "$__all"
+    }
+   }
+  ]
+ },
+ "annotations": {
+  "list": [
+   {
+    "name": "chaos-lab phases and faults",
+    "datasource": {
+     "type": "grafana",
+     "uid": "-- Grafana --"
+    },
+    "enable": true,
+    "iconColor": "red",
+    "target": {
+     "type": "tags",
+     "tags": [
+      "chaos-lab"
+     ],
+     "matchAny": true,
+     "limit": 500
+    }
+   }
+  ]
+ },
+ "panels": [
+  {
+   "id": 1,
+   "type": "timeseries",
+   "title": "Business requests by status (req/s)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (status) (rate(http_server_requests_seconds_count{run_id=\"$run_id\",repeat=~\"$repeat\",uri!~\"/actuator.*\"}[10s]))",
+     "legendFormat": "{{status}}"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "type": "timeseries",
+   "title": "Tomcat business threads",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "max(tomcat_threads_busy_threads{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "busy"
+    },
+    {
+     "refId": "B",
+     "expr": "max(tomcat_threads_config_max_threads{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "max"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "In-flight business requests by cohort",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (cohort) (chaos_business_inflight{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "{{cohort}}"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "JDBC pool",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "max(hikaricp_connections_active{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "active"
+    },
+    {
+     "refId": "B",
+     "expr": "max(hikaricp_connections_pending{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "pending"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "type": "timeseries",
+   "title": "Lookup calls by outcome (req/s)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (outcome, status) (rate(http_client_requests_seconds_count{run_id=\"$run_id\",repeat=~\"$repeat\"}[10s]))",
+     "legendFormat": "{{outcome}} {{status}}"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "type": "timeseries",
+   "title": "JVM live threads",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "max(jvm_threads_live_threads{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "live"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "type": "timeseries",
+   "title": "k6 requests by cohort and status (live, req/s)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (cohort, status) (rate(k6_http_reqs_total{run_id=\"$run_id\",repeat=~\"$repeat\"}[10s]))",
+     "legendFormat": "{{cohort}} {{status}}"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "type": "timeseries",
+   "title": "k6 latency p99 / p95 (live estimate, not a verdict)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "s"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "max by (cohort) (k6_http_req_duration_p99{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "p99 est. {{cohort}}"
+    },
+    {
+     "refId": "B",
+     "expr": "max by (cohort) (k6_http_req_duration_p95{run_id=\"$run_id\",repeat=~\"$repeat\"})",
+     "legendFormat": "p95 est. {{cohort}}"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "type": "logs",
+   "title": "Container logs",
+   "datasource": {
+    "type": "loki",
+    "uid": "loki"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 32,
+    "w": 24,
+    "h": 10
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "{service_name=~\".+\"} | run_id = \"$run_id\" | repeat =~ \"$repeat\""
+    }
+   ],
+   "options": {
+    "showTime": true,
+    "sortOrder": "Descending"
+   }
+  },
+  {
+   "id": 10,
+   "type": "table",
+   "title": "Traces",
+   "datasource": {
+    "type": "tempo",
+    "uid": "tempo"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 42,
+    "w": 24,
+    "h": 9
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "queryType": "traceql",
+     "query": "{resource.chaos.run_id=\"$run_id\"}",
+     "limit": 50
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+ Container chaos-a9eb21-r1-k6-run-f41498fd02d4 Creating 
+ Container chaos-a9eb21-r1-k6-run-f41498fd02d4 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=2.66ms med=6.68ms p(99)=306.03ms max=415.26ms
+      { expected_response:true }...: min=2.66ms med=5.16ms p(99)=96.24ms  max=342ms   
+    http_req_failed................: 33.47% 2011 out of 6007
+    http_reqs......................: 6007   50.053336/s
+
+    EXECUTION
+    iteration_duration.............: min=3.19ms med=7.86ms p(99)=307.57ms max=6s      
+    iterations.....................: 6002   50.011674/s
+    vus............................: 1      min=0            max=17 
+    vus_max........................: 901    min=901          max=901
+
+    NETWORK
+    data_received..................: 1.8 MB 15 kB/s
+    data_sent......................: 1.4 MB 12 kB/s
+
+
+

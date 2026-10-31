@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "n": 5,
+  "verdicts": {
+    "completion": {
+      "value": "complete",
+      "reasons": []
+    },
+    "validity": {
+      "value": "valid",
+      "reasons": []
+    },
+    "correctness": {
+      "value": "pass",
+      "reasons": [
+        "103 ambiguous"
+      ]
+    },
+    "slo": {
+      "budget_ms": 500,
+      "threshold": 0.99,
+      "value": "missed",
+      "reasons": [
+        "in-budget 201 ratio 0.6582 < 0.99",
+        "201 p99 13858 ms > 500 ms"
+      ],
+      "in_budget_ratio": 0.6582236293951008,
+      "issued": 6001,
+      "status_201": 5453,
+      "in_budget_201": 3950,
+      "k6_timeouts": 533,
+      "client_errors": 15,
+      "cut_off": 0,
+      "p99_201_ms": 13858.0,
+      "p50_201_ms": 7.0,
+      "segments": {
+        "before": {
+          "issued": 2001,
+          "status_201": 2001,
+          "in_budget_201": 1949,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 931.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.9740129935032483
+        },
+        "during": {
+          "issued": 2000,
+          "status_201": 1452,
+          "in_budget_201": 1,
+          "k6_timeouts": 533,
+          "client_errors": 15,
+          "cut_off": 0,
+          "p99_201_ms": 14755.0,
+          "p50_201_ms": 8158.0,
+          "in_budget_ratio": 0.0005
+        },
+        "after": {
+          "issued": 2000,
+          "status_201": 2000,
+          "in_budget_201": 2000,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 244.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 1.0
+        }
+      }
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793408332298.993,
+    "time_to_recovery_ms": 990.507080078125,
+    "probes_counted": 5
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-31T00:56:40.757Z",
+      "end": "2026-10-31T00:56:59.766Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-31T00:56:59.767Z",
+      "end": "2026-10-31T00:57:31.681Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-31T00:57:31.681Z",
+      "end": "2026-10-31T00:59:32.384Z"
+    },
+    {
+      "name": "recovery",
+      "timeout_s": 70,
+      "start": "2026-10-31T00:59:32.384Z",
+      "end": "2026-10-31T00:59:32.791Z"
+    },
+    {
+      "name": "convergence",
+      "timeout_s": null,
+      "start": "2026-10-31T00:59:32.791Z",
+      "not_applicable": "not applicable: the problem declares no convergence check",
+      "end": "2026-10-31T00:59:32.791Z"
+    },
+    {
+      "name": "collect",
+      "timeout_s": 180,
+      "start": "2026-10-31T00:59:32.791Z",
+      "end": "2026-10-31T00:59:40.486Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-10-31T00:59:40.486Z",
+      "end": "2026-10-31T00:59:41.964Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": 1793408252288.5,
+  "measured_end_ms": 1793408372362.3372,
+  "boundary_ms": 1793408251680.9238,
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-10-31T00:58:12.304Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793408292288.5,
+      "dispatched_ms": 1793408292291.7703,
+      "confirmed_ms": 1793408292304.258,
+      "result": "ok"
+    },
+    {
+      "seq": 13,
+      "kind": "fault-remove",
+      "at": "2026-10-31T00:58:52.299Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793408332288.5,
+      "dispatched_ms": 1793408332289.803,
+      "confirmed_ms": 1793408332298.993,
+      "result": "ok"
+    }
+  ],
+  "values": {
+    "in_budget_ratio": 0.6582236293951008,
+    "p99_201_ms": 13858.0,
+    "p50_201_ms": 7.0,
+    "time_to_recovery_ms": 990.507080078125,
+    "ambiguous": 103,
+    "violations": 0
+  },
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 7.07,
+      "cpu_max_pct": 154.62
+    },
+    "alloy": {
+      "cpu_mean_pct": 1.45,
+      "cpu_max_pct": 48.36
+    }
+  },
+  "compose_sha256": "8e6f9f8151f83cac94a410bcd0839cbef9580cc93334101d2f0dab72e3f606bb",
+  "clock_start": {
+    "offset_ms": 28.5,
+    "rtt_ms": 69.3
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-d42bc5-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:e2bb544f6de3d0c8250be781f6be296bb3fdc4791ab6e3cbb400afc9aa63afa9",
+    "resolved": {
+      "chaos.impl": "naive",
+      "chaos.lookup.response-timeout-ms": "10000",
+      "chaos.lookup.deadline-ms": "0",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "clock_end": {
+    "offset_ms": 30.1,
+    "rtt_ms": 74.4
+  },
+  "log_truncation": {},
+  "cohorts": {
+    "warmup": 1500,
+    "measured": 6001,
+    "probe": 6
+  },
+  "latency": {
+    "issued": 6001,
+    "status_201": 5453,
+    "in_budget_201": 3950,
+    "k6_timeouts": 533,
+    "client_errors": 15,
+    "cut_off": 0,
+    "p99_201_ms": 13858.0,
+    "p50_201_ms": 7.0
+  }
+}

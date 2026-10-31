@@ -1,0 +1,8 @@
+{"seq": 1, "kind": "images-start", "at": "2026-10-30T23:48:13.715Z"}
+{"seq": 2, "kind": "images-ready", "at": "2026-10-30T23:49:33.310Z", "duration_ms": 79596}
+{"seq": 3, "kind": "obs-start", "at": "2026-10-30T23:49:33.314Z"}
+{"seq": 4, "kind": "obs-ready", "at": "2026-10-30T23:49:41.290Z"}
+{"seq": 5, "kind": "run-stopped", "at": "2026-10-30T23:57:15.298Z", "reason": "interrupted"}
+{"seq": 6, "kind": "log-redacted", "at": "2026-10-30T23:57:19.595Z", "file": "logs/alloy.log", "replacements": 12}
+{"seq": 7, "kind": "log-truncated", "at": "2026-10-30T23:57:19.599Z", "file": "logs/alloy.log", "original_bytes": 68394423, "kept_head": 1048576, "kept_tail": 4194304}
+{"seq": 8, "kind": "obs-removed", "at": "2026-10-30T23:57:21.621Z", "left": []}

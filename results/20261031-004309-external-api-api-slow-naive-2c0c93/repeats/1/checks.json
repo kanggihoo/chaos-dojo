@@ -1,0 +1,517 @@
+{
+  "invariants": [
+    "one-order-per-success",
+    "payload-matches",
+    "no-order-on-failure",
+    "price-matches-stub",
+    "no-foreign-order",
+    "recovers"
+  ],
+  "result": "pass",
+  "violations": [],
+  "ambiguous": [
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "a3ea45c5-1090-4d6f-ab18-7cf17e955206",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "0a62920f-a729-4615-a5c6-67be912efd29",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "e5db9305-4bf9-4cd7-b4fc-cfcc2ea56402",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "aa3eda6c-9b17-4947-b037-7a51f34964eb",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "762eb153-da21-4cf6-8cc4-f4548ed464f3",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "b736668b-d390-4302-b1c6-10dddee7d04d",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "0245d0d6-534e-4ec2-b6f0-5e832d4eed06",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d7f76595-94e9-4c9e-aeed-03448fc4f6b0",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "56b32153-2d14-4653-b1ac-268cc52294ba",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "a9c58d01-03d3-457d-a545-c6825eb030f5",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "340b74ce-be76-490c-978e-6df427523dce",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "8ada044f-b682-4f39-86d5-8dd085cb4dcd",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "31c1d64e-736e-4b58-b6ee-6af5e4dd735e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "365e0100-627d-48f0-a85b-4bf00e47ba90",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "0a6091aa-5fd9-42f8-888a-8f219bda4e8a",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "bf7082ac-9c01-4bbb-baff-ca029696659b",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "3c3d78cb-5f16-4e1b-8007-04202be65b78",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d29b506f-7050-4f32-b5f8-0f6270a65657",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "4b609eef-5de1-45c3-b9e2-4e7c6d65939a",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "24492c7c-ba63-4756-8bb6-ce3250856786",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "2e19e555-7ea1-49b8-bf19-2bb0ce7624cd",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "de92a9fe-927d-4bbc-9b8c-08e9cb8f69ed",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "ab185f48-5bee-408c-ac4a-5655f9f64006",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "197c5cfa-2fe5-4fec-b8cf-350ecf8e6eb7",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "91d3e0b5-f76b-440a-a9b9-9e98a7ccd25f",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "fde7584c-5972-4f22-a19d-0519617a93ca",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "78893318-e5ad-47aa-95c3-ada75fa420f7",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "8f56fbdd-225b-4683-a343-939747fde8a9",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "84e9e71b-1e67-43f8-b931-59df5af8c725",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "982828d6-f627-48e8-9710-18854a46cb6e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "2879ff5d-fa9d-4563-9baa-9f9e8c36ecfb",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d13417c6-bdab-4693-8d47-59312d695b0e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "b0d57e60-f792-4b7c-9857-17302c4cab0e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "27a76dbc-6226-4432-b625-ab074d8ab02e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "899228ed-13fc-4289-92c6-e26785d28eda",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "6a1a0f59-a12f-4033-9f4e-ec268b0e4f7a",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "053a507f-6e60-4153-a5a6-812cecddb9c4",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "efc0416e-ba32-47a0-a633-e31084c91335",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "e27717e6-6ea3-439d-962e-bdcb708eaeed",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "3eb90b1e-311d-4cc9-b8a9-5f6f0a2c1503",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "049fa1b4-8bd4-427a-bbc8-972c1b591392",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "9943e9aa-c041-489c-a3f0-229783f58073",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "263cb15c-d5c0-4fc0-b590-792f75323ee9",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "b08e3330-bf33-43ee-84ab-37355bbaa0cc",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "b1b2236c-3b81-47d1-96d7-ba7b2b653e08",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "63e9b6ea-3724-4dfb-ab89-f8c17873a04e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "1dc11d26-c19c-45e5-bd7a-ac13fcce67b6",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "325f70e2-ad7a-44dc-9e90-c63f43e79604",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "355fd581-a997-41c7-af33-c634d4101e17",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "85493bca-64f4-496e-9306-4bbf6e6f0e8d",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "ac3fe77e-4f1d-426f-a1a5-bd727ecd4e64",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "6bfd3d4f-ab32-472e-84d1-756e27de13e3",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "08e0713e-ad43-4f2e-86eb-dbf21d9be34d",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "c8b7c626-0b02-4daf-a8e5-aa155277c531",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d2a44809-d5a4-43cf-98cd-506d88979b5a",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "72ae9e03-d204-40f6-87ec-0bcaf1b85ec4",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "007b8b9b-c8df-41e9-afb0-8d7c120c4eac",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "1fa3c216-339f-4d80-9eee-717d0565db37",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "cd525eb3-7de4-4296-a8a7-37c367e2cc72",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "c9e62881-b4f4-49c4-937d-ca4462cdeb24",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "4388b983-658e-47c5-8429-bdaade7407f7",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "0941b563-6134-4725-aa8b-357ea176fb6e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d8375dd8-1d44-48b5-9bab-1a118c0b0bca",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "692555c4-ca0c-4479-85c4-7830b38b13d0",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "7cf93505-3e6f-4521-ae4d-83bed67901c7",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d9542239-676d-4001-8cf1-00942d0aca76",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "8f56f027-2a85-4270-8c69-06648fb8643b",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "a3f5377c-85ff-4ba7-80b1-e186a4eadc46",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "569a4741-d158-49fa-a990-ba575a95de1c",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "7bce18de-1e3b-419f-b7b5-33838858956c",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "ba0c21f9-526a-4354-8887-ff3b73a0d251",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "932bb1f5-593b-4f59-961e-5e620cb5dc18",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "86cac95b-cf9d-4446-be31-e1a3202f9b84",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "2ad25e71-ebd6-4b03-b787-d2d1239930ab",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "4b759cb8-6d2a-42d2-9e0a-8ce06ef6019d",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "3ed84642-f946-4742-95f0-7f740bca59aa",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "c4f156bc-47b0-4119-a984-7e5bfd10a823",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "015dde44-5022-407a-8344-f193813a8f79",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "003f53ad-1570-4a60-b237-96396a6f4dfe",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d1872f68-6c17-49bc-b79e-2b74e83a27b7",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "a3c6ce03-e582-4b99-be49-e9961ce76363",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "836e7538-7807-412c-b0b6-125a8b8fb9d9",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "8a67f2db-9719-42c4-b10d-72e76796ce9c",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "44ce0c16-ab49-4e38-a7b6-0d99b42427c9",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "4cb8fb3b-dd68-4f2e-882d-e602b622c961",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "8c146f9d-b5bf-4822-a28c-95cf5e03fb0f",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "29768aab-0b79-444d-9f30-e7a22a6fd706",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "02dab27f-352c-4422-b090-07fa0eee4f89",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "fdae7127-a174-481c-ac8d-bbe85cafc366",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "9e181a23-728b-48ba-8dc7-87daefaa76aa",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "c545c742-7020-4f8c-b82f-7c779dc42e89",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "d31bfae3-69de-4524-b09c-572119a764d9",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "73c1476f-a7f1-48ef-8dd3-0161df1dd396",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "9159a1f9-1a2c-462c-a6d2-2f6087beba37",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "6c4cbd33-bbf5-43ee-9922-b585c3566895",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "4bebc00b-9b24-4760-9a74-ab36c20ff10d",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "fd4d2f7a-487f-4604-9739-89a8a35f7c81",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "df5aeda2-e005-4c78-91a7-c4da8601621e",
+      "reason": "k6 timeout"
+    },
+    {
+      "kind": "persisted without client confirmation",
+      "request_id": "b969faab-3171-4c8c-95d4-aa45d77f228e",
+      "reason": "k6 timeout"
+    }
+  ],
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793407615433.747,
+    "time_to_recovery_ms": 991.2529296875,
+    "probes_counted": 5
+  },
+  "rollbacks_recorded": []
+}

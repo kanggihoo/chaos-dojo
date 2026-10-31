@@ -1,0 +1,24 @@
+ Container chaos-a9eb21-r4-k6-run-6ed38af6e350 Creating 
+ Container chaos-a9eb21-r4-k6-run-6ed38af6e350 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=2.68ms med=7.07ms p(99)=310.9ms  max=479.46ms
+      { expected_response:true }...: min=2.68ms med=5.54ms p(99)=125.34ms max=322.97ms
+    http_req_failed................: 33.74% 2027 out of 6006
+    http_reqs......................: 6006   50.045878/s
+
+    EXECUTION
+    iteration_duration.............: min=3.26ms med=8.31ms p(99)=314.52ms max=5.99s   
+    iterations.....................: 6001   50.004215/s
+    vus............................: 1      min=0            max=16 
+    vus_max........................: 901    min=901          max=901
+
+    NETWORK
+    data_received..................: 1.8 MB 15 kB/s
+    data_sent......................: 1.4 MB 12 kB/s
+
+
+

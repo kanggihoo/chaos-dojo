@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "n": 1,
+  "verdicts": {
+    "completion": {
+      "value": "incomplete",
+      "reasons": [
+        "run stopped: fault remove on lookup failed: timed out"
+      ]
+    },
+    "validity": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "correctness": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "slo": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-30T23:58:53.017Z",
+      "end": "2026-10-30T23:59:13.492Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-30T23:59:13.492Z",
+      "end": "2026-10-30T23:59:45.676Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-30T23:59:45.676Z",
+      "end": "2026-10-31T00:01:09.447Z"
+    }
+  ],
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-10-31T00:00:26.420Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793404826397.5,
+      "dispatched_ms": 1793404826402.7488,
+      "confirmed_ms": 1793404826420.552,
+      "result": "ok"
+    }
+  ],
+  "compose_sha256": "1d82020c3e4b798538aa99c269cce0b1a2b25ea530edbef44628114381ca7dda",
+  "clock_start": {
+    "offset_ms": 14.5,
+    "rtt_ms": 71.3
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-7bea9c-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:f55af1f8097345724a519f0ae5ef52d174c4d50a22db540ce2a29cd8352912c4",
+    "resolved": {
+      "chaos.impl": "timeout",
+      "chaos.lookup.response-timeout-ms": "300",
+      "chaos.lookup.deadline-ms": "300",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "log_truncation": {}
+}

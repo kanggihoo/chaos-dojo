@@ -1,0 +1,29 @@
+Running Grafana v12.1.1 logging=false
+Running OpenTelemetry Collector v0.134.1 logging=false
+Running Prometheus v3.5.0 logging=false
+Waiting for the OpenTelemetry collector and the Grafana LGTM stack to start up...
+Running Tempo v2.8.2 logging=false
+Running Pyroscope v1.14.1 logging=false
+Running Loki v3.5.3 logging=false
+Prometheus is up and running. Startup time: 2 seconds
+Otelcol is up and running. Startup time: 2 seconds
+Pyroscope is up and running. Startup time: 3 seconds
+Loki is up and running. Startup time: 3 seconds
+Tempo is up and running. Startup time: 3 seconds
+Grafana is up and running. Startup time: 7 seconds
+Total startup time: 7 seconds
+
+Startup Time Summary:
+---------------------
+Grafana: 7 seconds
+Loki: 3 seconds
+Prometheus: 2 seconds
+Tempo: 3 seconds
+Pyroscope: 3 seconds
+OpenTelemetry collector: 2 seconds
+Total: 7 seconds
+The OpenTelemetry collector and the Grafana LGTM stack are up and running. (created /tmp/ready)
+Open ports:
+ - 4317: OpenTelemetry GRPC endpoint
+ - 4318: OpenTelemetry HTTP endpoint
+ - 3000: Grafana. User: admin, password: admin

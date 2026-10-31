@@ -1,0 +1,11 @@
+
+The WireMock server is started .....
+version:                      3.13.1
+port:                         8080
+enable-browser-proxying:      false
+disable-banner:               true
+no-request-journal:           false
+verbose:                      false
+admin-api-basic-auth:         enabled
+
+extensions:                   response-template,webhook

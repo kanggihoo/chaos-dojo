@@ -1,0 +1,46 @@
+{
+  "baseUrl": "http://app:8080",
+  "seed": 42,
+  "timeoutS": 15,
+  "probe": {
+    "intervalMs": 1000,
+    "count": 62,
+    "toleranceMs": 1000,
+    "consecutive": 5,
+    "budgetMs": 500
+  },
+  "options": {
+    "scenarios": {
+      "measured": {
+        "executor": "constant-arrival-rate",
+        "exec": "measured",
+        "rate": 50,
+        "timeUnit": "1s",
+        "duration": "120s",
+        "preAllocatedVUs": 900,
+        "maxVUs": 900,
+        "gracefulStop": "20s"
+      },
+      "probe": {
+        "executor": "per-vu-iterations",
+        "exec": "probe",
+        "vus": 1,
+        "iterations": 1,
+        "startTime": "80s",
+        "maxDuration": "82s",
+        "gracefulStop": "20s"
+      }
+    },
+    "tags": {
+      "run_id": "20261031-004309-external-api-api-slow-naive-2c0c93",
+      "repeat": "4"
+    },
+    "noVUConnectionReuse": true,
+    "summaryTrendStats": [
+      "min",
+      "med",
+      "p(99)",
+      "max"
+    ]
+  }
+}

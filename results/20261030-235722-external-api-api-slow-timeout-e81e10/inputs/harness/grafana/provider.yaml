@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: chaos-lab
+    type: file
+    options:
+      path: /chaos/dashboard.json

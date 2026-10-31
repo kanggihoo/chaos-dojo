@@ -59,11 +59,11 @@ uv run chaos clean --run <run-id>
 
 ### 환경 생성과 격리
 
-- [ ] AC-8: 각 repeat는 다른 repeat와 겹치지 않는 새 Compose 프로젝트 이름과 새 볼륨으로 실행된다; 결과에 저장된 `compose.yaml`은 Compose에 넘긴 파일과 해시가 같다; 그 파일에 든 경로는 run 디렉터리 기준 상대 경로와 Docker 소켓 경로뿐이다; 모든 입력 마운트는 run의 `inputs/` 스냅샷을 가리킨다. (D-5, D-9, D-16)
+- [x] AC-8: 각 repeat는 다른 repeat와 겹치지 않는 새 Compose 프로젝트 이름과 새 볼륨으로 실행된다; 결과에 저장된 `compose.yaml`은 Compose에 넘긴 파일과 해시가 같다; 그 파일에 든 경로는 run 디렉터리 기준 상대 경로와 Docker 소켓 경로뿐이다; 모든 입력 마운트는 run의 `inputs/` 스냅샷을 가리킨다. (D-5, D-9, D-16)
 - [x] AC-9: 다음 repeat의 첫 자원 생성은 이전 repeat의 소유 자원이 모두 삭제된 것을 확인한 뒤에만 일어난다; 삭제에 실패하면 run을 멈추고 그때까지의 결과를 보존한 채 exit 3으로 끝난다. (D-9)
-- [ ] AC-10: 한 엔진에서 run이 진행 중일 때 다른 `chaos run`은 lock 외의 자원을 만들기 전에 exit 3으로 거부된다; 다른 checkout에서 실행한 run도 마찬가지다. (D-9)
-- [ ] AC-11: 정리에 성공한 run은 종료 코드와 상관없이 그 run id 라벨이 붙은 컨테이너, 네트워크, 볼륨, lock을 하나도 남기지 않는다; 정리에 실패한 run은 lock을 남기고, 그다음 `chaos run`은 `chaos clean`을 안내하며 exit 3으로 거부된다. (D-9, D-21)
-- [ ] AC-12: `chaos clean`과 `chaos clean --run <id>`는 Interfaces "clean 규칙"을 따른다; 둘 다 라벨이 없는 자원이나 이 기기에서 살아 있다고 확인된 run의 자원은 지우지 않는다; `--run`은 생존을 확인할 수 없는 run을 사용자가 책임지고 해제하는 수단이다. (D-6, D-9, D-21)
+- [x] AC-10: 한 엔진에서 run이 진행 중일 때 다른 `chaos run`은 lock 외의 자원을 만들기 전에 exit 3으로 거부된다; 다른 checkout에서 실행한 run도 마찬가지다. (D-9)
+- [x] AC-11: 정리에 성공한 run은 종료 코드와 상관없이 그 run id 라벨이 붙은 컨테이너, 네트워크, 볼륨, lock을 하나도 남기지 않는다; 정리에 실패한 run은 lock을 남기고, 그다음 `chaos run`은 `chaos clean`을 안내하며 exit 3으로 거부된다. (D-9, D-21)
+- [x] AC-12: `chaos clean`과 `chaos clean --run <id>`는 Interfaces "clean 규칙"을 따른다; 둘 다 라벨이 없는 자원이나 이 기기에서 살아 있다고 확인된 run의 자원은 지우지 않는다; `--run`은 생존을 확인할 수 없는 run을 사용자가 책임지고 해제하는 수단이다. (D-6, D-9, D-21)
 - [ ] AC-13: 호스트에 `DOCKER_DEFAULT_PLATFORM`, `COMPOSE_FILE`, `COMPOSE_PROFILES`를 설정하거나 현재 디렉터리에 `.env`를 두어도, 생성되거나 사용되는 Compose 구성은 바뀌지 않는다; 시작 때 정한 엔진의 신원과 하위 프로세스에 넘긴 환경 변수 이름은 결과에 기록된다. (D-5, D-9)
 - [x] AC-14: 저장소에는 OS별 실행 파일·스크립트(`.sh`, `.ps1`, `.bat`, `.cmd`, Gradle wrapper), OS별 설정, OS별 실행 안내가 없다; 하네스 소스에는 `sys.platform`, `os.name`, `platform.system` 같은 OS 판별 분기가 없다; `.gitattributes`는 컨테이너가 읽는 텍스트 asset에 LF를 강제하고 `results/**`를 `-text`로 지정한다; `.gitignore`는 `reports/`를 무시한다. (D-2, D-5)
 
@@ -96,15 +96,15 @@ uv run chaos clean --run <run-id>
 
 ### 관측
 
-- [ ] AC-33: Alloy의 스크레이프 대상은 run 네트워크에 있는 app 관리 포트뿐이며, 대상 목록이 결과에 기록된다; 하네스는 새 repeat의 앱에서 첫 스크레이프가 성공한 것을 확인한 뒤에 warmup을 시작한다. (D-13)
+- [x] AC-33: Alloy의 스크레이프 대상은 run 네트워크에 있는 app 관리 포트뿐이며, 대상 목록이 결과에 기록된다; 하네스는 새 repeat의 앱에서 첫 스크레이프가 성공한 것을 확인한 뒤에 warmup을 시작한다. (D-13)
 - [ ] AC-34: `chaos run`은 실행 중 `127.0.0.1`에 묶인 Grafana 주소를 출력한다; Grafana는 익명 읽기 전용으로 열리고 기본 admin 계정(`admin/admin`)으로는 로그인할 수 없다; 저장소에 커밋된 대시보드에서 현재 run·repeat의 앱 지표, k6 실시간 지표, 컨테이너 로그, trace, 단계·장애 annotation을 볼 수 있다; 실시간 k6 percentile에는 추정치라는 표시가 붙는다. (D-13)
-- [ ] AC-35: 각 repeat 결과에는 Interfaces "결과 파일 배치"의 필수 파일이 있다; 로그는 파일별 상한과 보존 규칙을 지키고, UTF-8 글자 경계에서 자르며, 잘린 경우 그 사실을 표시한다; 관측 스택을 지운 뒤 `chaos report <run>`이 만든 HTML은 그 run의 `report.html`과 바이트 단위로 같다. (D-13, D-17)
-- [ ] AC-36: repeat 시작과 끝에 호스트와 엔진의 시계 차이를 재서 기록한다; 엔진 시계를 쓰는 모든 소스(k6, Prometheus, Docker stats, 로그)의 시각은 그 값으로 호스트 UTC로 바꾼다; 차이나 드리프트가 한도를 넘으면 그 repeat는 invalid다. (D-13)
-- [ ] AC-37: 하네스가 생성하는 결과 파일(사용자가 작성한 `inputs/` 사본과 dirty patch는 원본 그대로 복사하므로 제외)에는 다음이 들어가지 않는다: 사용자 홈 경로나 사용자 이름이 든 절대 경로, 호스트 이름, 생성된 자격 증명 값(DB, Grafana, WireMock), 서비스 계정 토큰, request id 지표 라벨. (D-5, D-13, D-21)
+- [x] AC-35: 각 repeat 결과에는 Interfaces "결과 파일 배치"의 필수 파일이 있다; 로그는 파일별 상한과 보존 규칙을 지키고, UTF-8 글자 경계에서 자르며, 잘린 경우 그 사실을 표시한다; 관측 스택을 지운 뒤 `chaos report <run>`이 만든 HTML은 그 run의 `report.html`과 바이트 단위로 같다. (D-13, D-17)
+- [x] AC-36: repeat 시작과 끝에 호스트와 엔진의 시계 차이를 재서 기록한다; 엔진 시계를 쓰는 모든 소스(k6, Prometheus, Docker stats, 로그)의 시각은 그 값으로 호스트 UTC로 바꾼다; 차이나 드리프트가 한도를 넘으면 그 repeat는 invalid다. (D-13)
+- [x] AC-37: 하네스가 생성하는 결과 파일(사용자가 작성한 `inputs/` 사본과 dirty patch는 원본 그대로 복사하므로 제외)에는 다음이 들어가지 않는다: 사용자 홈 경로나 사용자 이름이 든 절대 경로, 호스트 이름, 생성된 자격 증명 값(DB, Grafana, WireMock), 서비스 계정 토큰, request id 지표 라벨. (D-5, D-13, D-21)
 
 ### 결과와 리포트
 
-- [ ] AC-38: 각 run은 `results/` 아래에 배타적으로 새로 만든 디렉터리를 가진다; 이름이 겹치면 덮어쓰지 않고 새 무작위 접미사로 다시 만든다; 결과에는 Interfaces "신원 정보" 항목이 모두 있다; dirty 상태는 결과와 리포트에 표시된다; `results/`, `reports/`, `.wf-grill/`은 빌드 입력과 dirty 스냅샷에서 빠진다. (D-16)
+- [x] AC-38: 각 run은 `results/` 아래에 배타적으로 새로 만든 디렉터리를 가진다; 이름이 겹치면 덮어쓰지 않고 새 무작위 접미사로 다시 만든다; 결과에는 Interfaces "신원 정보" 항목이 모두 있다; dirty 상태는 결과와 리포트에 표시된다; `results/`, `reports/`, `.wf-grill/`은 빌드 입력과 dirty 스냅샷에서 빠진다. (D-16)
 - [x] AC-39: `chaos report`는 저장된 결과 파일만 읽고 결과 디렉터리를 바꾸지 않는다; 출력은 새 파일 `reports/<YYYYMMDD-HHMMSS>-<무작위>.html`에 쓰고 그 경로를 출력한다; 부분 run(exit 3)의 결과도 읽는다; 같은 scenario이면서 비교 신원이 같은 run끼리만 한 페이지로 비교한다; 환경 신원만 다르면 비교를 거부하지만, `--allow-cross-env`를 주면 승자나 순위 없이 나란히 보여 준다; 그 밖의 신원이 다르면 언제나 거부한다. (D-17)
 - [x] AC-40: 리포트는 모든 scenario에서 같은 레이아웃이다; problem별 항목은 공통 항목 배열로 표시하고, 해당 없는 항목은 그렇다고 표시한다; 예측이 있으면 결과와 함께 보여 준다; impl의 `description`과 추가 의존성을 비교 변수와 그 비용으로 보여 준다; repeat별 관측 스택 자원 사용량과 "관측 스택은 run 동안 유지됨"이라는 한계를 표시한다; 재현 명령에는 절대 경로나 셸 문법이 없다; 생성 시각, 무작위 값, 현재 저장소 상태처럼 결과 파일 밖의 값은 HTML에 넣지 않는다. (D-17)
 - [x] AC-41: 결과 파일은 자기 스키마 버전을 담는다; 리포트는 지금까지 공개된 모든 결과 스키마 버전을 읽는다(이번 iteration에서는 버전 1 하나). (D-6, D-7)

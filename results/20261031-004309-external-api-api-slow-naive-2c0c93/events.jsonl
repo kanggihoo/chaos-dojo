@@ -1,0 +1,6 @@
+{"seq": 1, "kind": "images-start", "at": "2026-10-31T00:43:10.254Z"}
+{"seq": 2, "kind": "images-ready", "at": "2026-10-31T00:44:31.647Z", "duration_ms": 81393}
+{"seq": 3, "kind": "obs-start", "at": "2026-10-31T00:44:31.650Z"}
+{"seq": 4, "kind": "obs-ready", "at": "2026-10-31T00:44:41.680Z"}
+{"seq": 5, "kind": "log-redacted", "at": "2026-10-31T00:59:42.047Z", "file": "logs/alloy.log", "replacements": 32}
+{"seq": 6, "kind": "obs-removed", "at": "2026-10-31T00:59:43.522Z", "left": []}

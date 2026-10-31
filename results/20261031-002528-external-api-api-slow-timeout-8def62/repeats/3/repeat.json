@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "n": 3,
+  "verdicts": {
+    "completion": {
+      "value": "complete",
+      "reasons": []
+    },
+    "validity": {
+      "value": "valid",
+      "reasons": []
+    },
+    "correctness": {
+      "value": "pass",
+      "reasons": []
+    },
+    "slo": {
+      "budget_ms": 500,
+      "threshold": 0.99,
+      "value": "missed",
+      "reasons": [
+        "in-budget 201 ratio 0.6659 < 0.99"
+      ],
+      "in_budget_ratio": 0.6658890184969172,
+      "issued": 6001,
+      "status_201": 3996,
+      "in_budget_201": 3996,
+      "k6_timeouts": 0,
+      "client_errors": 0,
+      "cut_off": 0,
+      "p99_201_ms": 92.0,
+      "p50_201_ms": 6.0,
+      "segments": {
+        "before": {
+          "issued": 2001,
+          "status_201": 2000,
+          "in_budget_201": 2000,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 73.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.9995002498750625
+        },
+        "during": {
+          "issued": 2000,
+          "status_201": 9,
+          "in_budget_201": 9,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 313.0,
+          "p50_201_ms": 171.0,
+          "in_budget_ratio": 0.0045
+        },
+        "after": {
+          "issued": 2000,
+          "status_201": 1987,
+          "in_budget_201": 1987,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 129.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.9935
+        }
+      }
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793406916079.2131,
+    "time_to_recovery_ms": 3994.386962890625,
+    "probes_counted": 8
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-31T00:33:04.403Z",
+      "end": "2026-10-31T00:33:23.242Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-31T00:33:23.243Z",
+      "end": "2026-10-31T00:33:55.395Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-31T00:33:55.396Z",
+      "end": "2026-10-31T00:35:56.104Z"
+    },
+    {
+      "name": "recovery",
+      "timeout_s": 70,
+      "start": "2026-10-31T00:35:56.104Z",
+      "end": "2026-10-31T00:35:56.506Z"
+    },
+    {
+      "name": "convergence",
+      "timeout_s": null,
+      "start": "2026-10-31T00:35:56.506Z",
+      "not_applicable": "not applicable: the problem declares no convergence check",
+      "end": "2026-10-31T00:35:56.506Z"
+    },
+    {
+      "name": "collect",
+      "timeout_s": 180,
+      "start": "2026-10-31T00:35:56.506Z",
+      "end": "2026-10-31T00:36:03.678Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-10-31T00:36:03.678Z",
+      "end": "2026-10-31T00:36:05.025Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": 1793406836071.6,
+  "measured_end_ms": 1793406956092.742,
+  "boundary_ms": 1793406835394.966,
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-10-31T00:34:36.083Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793406876071.6,
+      "dispatched_ms": 1793406876074.475,
+      "confirmed_ms": 1793406876083.91,
+      "result": "ok"
+    },
+    {
+      "seq": 13,
+      "kind": "fault-remove",
+      "at": "2026-10-31T00:35:16.079Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793406916071.6,
+      "dispatched_ms": 1793406916073.881,
+      "confirmed_ms": 1793406916079.2131,
+      "result": "ok"
+    }
+  ],
+  "values": {
+    "in_budget_ratio": 0.6658890184969172,
+    "p99_201_ms": 92.0,
+    "p50_201_ms": 6.0,
+    "time_to_recovery_ms": 3994.386962890625,
+    "ambiguous": 0,
+    "violations": 0
+  },
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 6.52,
+      "cpu_max_pct": 50.7
+    },
+    "alloy": {
+      "cpu_mean_pct": 1.85,
+      "cpu_max_pct": 17.51
+    }
+  },
+  "compose_sha256": "eb34711fd87b60a520b9825bf7221db4f578a411e43047b127294adbbaf5aff5",
+  "clock_start": {
+    "offset_ms": 27.4,
+    "rtt_ms": 67.1
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-a9eb21-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:839ff5a5812aa2e9d550f0b41482eaf4c47cfff128e14ce68315f3eb3a294199",
+    "resolved": {
+      "chaos.impl": "timeout",
+      "chaos.lookup.response-timeout-ms": "300",
+      "chaos.lookup.deadline-ms": "300",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "clock_end": {
+    "offset_ms": 32.8,
+    "rtt_ms": 67.2
+  },
+  "log_truncation": {},
+  "cohorts": {
+    "warmup": 1501,
+    "measured": 6001,
+    "probe": 9
+  },
+  "latency": {
+    "issued": 6001,
+    "status_201": 3996,
+    "in_budget_201": 3996,
+    "k6_timeouts": 0,
+    "client_errors": 0,
+    "cut_off": 0,
+    "p99_201_ms": 92.0,
+    "p50_201_ms": 6.0
+  }
+}

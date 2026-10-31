@@ -1,0 +1,64 @@
+openapi: 3.1.0
+info: {title: Orders (first problem app), version: "1"}
+paths:
+  /orders:
+    post:
+      parameters:
+        - name: X-Request-Id
+          in: header
+          required: true
+          schema: {type: string, pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"}
+        - name: X-Chaos-Cohort
+          in: header
+          required: true
+          schema: {enum: [warmup, measured, probe]}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, quantity]
+              properties:
+                productId: {type: string, pattern: "^p-(00[1-9]|01[0-9]|020)$"}
+                quantity: {type: integer, minimum: 1, maximum: 10}
+      responses:
+        "201":
+          description: order stored
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orderId, requestId, productId, quantity, unitPrice, total, currency]
+                properties:
+                  orderId: {type: integer}
+                  requestId: {type: string}
+                  productId: {type: string}
+                  quantity: {type: integer}
+                  unitPrice: {type: integer}
+                  total: {type: integer, description: unitPrice × quantity}
+                  currency: {const: KRW}
+        "400": {$ref: "#/components/responses/Problem"}
+        "409": {$ref: "#/components/responses/Problem"}
+        "500": {$ref: "#/components/responses/Problem"}
+        "502": {$ref: "#/components/responses/Problem"}
+        "503": {$ref: "#/components/responses/Problem"}
+        "504": {$ref: "#/components/responses/Problem"}
+components:
+  responses:
+    Problem:
+      description: >-
+        RFC 9457 problem. type is one of urn:chaos-lab:problem:{invalid-request, upstream-timeout,
+        upstream-unavailable, upstream-error, invalid-upstream-response, product-unavailable,
+        duplicate-request, db-error}; the first matching row of the spec's precedence table wins.
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            required: [type, title, status, detail, requestId]
+            properties:
+              type: {type: string}
+              title: {type: string}
+              status: {type: integer}
+              detail: {type: string}
+              requestId: {type: [string, "null"]}

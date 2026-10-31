@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "n": 1,
+  "verdicts": {
+    "completion": {
+      "value": "complete",
+      "reasons": []
+    },
+    "validity": {
+      "value": "invalid",
+      "reasons": [
+        "required scrape failed (up=0) during measured load"
+      ]
+    },
+    "correctness": {
+      "value": "pass",
+      "reasons": [
+        "83 ambiguous"
+      ]
+    },
+    "slo": {
+      "budget_ms": 500,
+      "threshold": 0.99,
+      "value": "missed",
+      "reasons": [
+        "in-budget 201 ratio 0.6304 < 0.99",
+        "201 p99 13339 ms > 500 ms"
+      ],
+      "in_budget_ratio": 0.630394934177637,
+      "issued": 6001,
+      "status_201": 5476,
+      "in_budget_201": 3783,
+      "k6_timeouts": 502,
+      "client_errors": 23,
+      "cut_off": 0,
+      "p99_201_ms": 13339.0,
+      "p50_201_ms": 7.0,
+      "segments": {
+        "before": {
+          "issued": 2001,
+          "status_201": 2001,
+          "in_budget_201": 1999,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 74.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.999000499750125
+        },
+        "during": {
+          "issued": 2000,
+          "status_201": 1475,
+          "in_budget_201": 1,
+          "k6_timeouts": 502,
+          "client_errors": 23,
+          "cut_off": 0,
+          "p99_201_ms": 14442.0,
+          "p50_201_ms": 8116.0,
+          "in_budget_ratio": 0.0005
+        },
+        "after": {
+          "issued": 2000,
+          "status_201": 2000,
+          "in_budget_201": 1783,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 2457.0,
+          "p50_201_ms": 6.0,
+          "in_budget_ratio": 0.8915
+        }
+      }
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793404315381.282,
+    "time_to_recovery_ms": 989.617919921875,
+    "probes_counted": 5
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-10-30T23:49:41.291Z",
+      "end": "2026-10-30T23:50:02.728Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-10-30T23:50:02.729Z",
+      "end": "2026-10-30T23:50:34.832Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-10-30T23:50:34.832Z",
+      "end": "2026-10-30T23:52:35.472Z"
+    },
+    {
+      "name": "recovery",
+      "timeout_s": 70,
+      "start": "2026-10-30T23:52:35.472Z",
+      "end": "2026-10-30T23:52:36.084Z"
+    },
+    {
+      "name": "convergence",
+      "timeout_s": null,
+      "start": "2026-10-30T23:52:36.084Z",
+      "not_applicable": "not applicable: the problem declares no convergence check",
+      "end": "2026-10-30T23:52:36.084Z"
+    },
+    {
+      "name": "collect",
+      "timeout_s": 180,
+      "start": "2026-10-30T23:52:36.084Z",
+      "end": "2026-10-30T23:52:43.130Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-10-30T23:52:43.131Z",
+      "end": "2026-10-30T23:52:44.716Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": 1793404235370.9,
+  "measured_end_ms": 1793404355463.4348,
+  "boundary_ms": 1793404234831.858,
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-10-30T23:51:15.378Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793404275370.9,
+      "dispatched_ms": 1793404275376.492,
+      "confirmed_ms": 1793404275378.686,
+      "result": "ok"
+    },
+    {
+      "seq": 13,
+      "kind": "fault-remove",
+      "at": "2026-10-30T23:51:55.381Z",
+      "target": "lookup",
+      "action": "latency",
+      "value_ms": 2000,
+      "planned_ms": 1793404315370.9,
+      "dispatched_ms": 1793404315374.8118,
+      "confirmed_ms": 1793404315381.282,
+      "result": "ok"
+    }
+  ],
+  "values": {
+    "in_budget_ratio": 0.630394934177637,
+    "p99_201_ms": 13339.0,
+    "p50_201_ms": 7.0,
+    "time_to_recovery_ms": 989.617919921875,
+    "ambiguous": 83,
+    "violations": 0
+  },
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 18.67,
+      "cpu_max_pct": 164.77
+    },
+    "alloy": {
+      "cpu_mean_pct": 31.93,
+      "cpu_max_pct": 77.24
+    }
+  },
+  "compose_sha256": "81f542bd15c2279643ff691a395b23e9d67873b6032efd6d314ed8991e9bb475",
+  "clock_start": {
+    "offset_ms": 27.1,
+    "rtt_ms": 67.4
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-353870-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    }
+  },
+  "app": {
+    "image_id": "sha256:22e1e4ff147d134d8d0cf4554a8bb12e86a30cba207a3d87aedeaf13520dcfb9",
+    "resolved": {
+      "chaos.impl": "naive",
+      "chaos.lookup.response-timeout-ms": "10000",
+      "chaos.lookup.deadline-ms": "0",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "clock_end": {
+    "offset_ms": 27.8,
+    "rtt_ms": 69.8
+  },
+  "log_truncation": {},
+  "cohorts": {
+    "warmup": 1501,
+    "measured": 6001,
+    "probe": 6
+  },
+  "latency": {
+    "issued": 6001,
+    "status_201": 5476,
+    "in_budget_201": 3783,
+    "k6_timeouts": 502,
+    "client_errors": 23,
+    "cut_off": 0,
+    "p99_201_ms": 13339.0,
+    "p50_201_ms": 7.0
+  }
+}
