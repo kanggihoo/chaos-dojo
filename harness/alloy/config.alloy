@@ -74,12 +74,19 @@ prometheus.relabel "k6" {
 
 otelcol.receiver.prometheus "default" {
   output {
-    metrics = [otelcol.exporter.otlphttp.lgtm.input]
+    metrics = [otelcol.exporter.otlphttp.metrics.input]
   }
 }
 
 discovery.relabel "logs" {
   targets = discovery.docker.run.targets
+  // k6 prints one line per request; those lines are canonical result files already, and tailing them
+  // live would starve Alloy's CPU budget and delay scrapes.
+  rule {
+    source_labels = ["__meta_docker_container_label_chaos_lab_role"]
+    regex         = "k6"
+    action        = "drop"
+  }
   rule {
     source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
     target_label  = "service"
@@ -103,7 +110,7 @@ loki.source.docker "run" {
 
 otelcol.receiver.loki "default" {
   output {
-    logs = [otelcol.exporter.otlphttp.lgtm.input]
+    logs = [otelcol.processor.batch.logs.input]
   }
 }
 
@@ -112,13 +119,44 @@ otelcol.receiver.otlp "app" {
     endpoint = "0.0.0.0:4318"
   }
   output {
-    metrics = [otelcol.exporter.otlphttp.lgtm.input]
-    logs    = [otelcol.exporter.otlphttp.lgtm.input]
-    traces  = [otelcol.exporter.otlphttp.lgtm.input]
+    metrics = [otelcol.exporter.otlphttp.metrics.input]
+    logs    = [otelcol.processor.batch.logs.input]
+    traces  = [otelcol.processor.batch.traces.input]
   }
 }
 
-otelcol.exporter.otlphttp "lgtm" {
+otelcol.processor.batch "logs" {
+  output {
+    logs = [otelcol.exporter.otlphttp.logs.input]
+  }
+}
+
+otelcol.processor.batch "traces" {
+  output {
+    traces = [otelcol.exporter.otlphttp.traces.input]
+  }
+}
+
+// One exporter per signal, so log or trace backpressure never drops required metrics.
+otelcol.exporter.otlphttp "metrics" {
+  client {
+    endpoint = "http://lgtm:4318"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+otelcol.exporter.otlphttp "logs" {
+  client {
+    endpoint = "http://lgtm:4318"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+otelcol.exporter.otlphttp "traces" {
   client {
     endpoint = "http://lgtm:4318"
     tls {

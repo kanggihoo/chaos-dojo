@@ -559,7 +559,7 @@ class Run:
         try:
             return rp.run()
         except BaseException as e:
-            self.repeats.append(rp.stopped(f"run stopped: {e or type(e).__name__}"))
+            self.repeats.append(rp.stopped(f"run stopped: {str(e) or type(e).__name__}"))
             raise
 
     def write_run_json(self, exit_code, error):
@@ -893,7 +893,7 @@ class Repeat:
                 base = f"http://{self.toxi}/proxies/{f['target']}"
                 if f["action"] == "latency":
                     if what == "apply":
-                        http("POST", f"{base}/toxics", {"name": name, "type": "latency", "stream": "downstream",
+                        http("POST", f"{base}/toxics", {"name": name, "type": "latency", "stream": "upstream",
                                                        "attributes": {"latency": f["value_ms"], "jitter": 0}}, timeout=3)
                     else:
                         http("DELETE", f"{base}/toxics/{name}", timeout=3)

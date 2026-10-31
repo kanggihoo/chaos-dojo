@@ -232,6 +232,7 @@ def test_interrupt_or_fault_failure_records_partial_results(repo, monkeypatch, e
     d, run = the_run(repo)
     assert [r["completion"] for r in run["repeats"]] == ["complete", "incomplete", "not-run", "not-run", "not-run"]
     assert all(r["exclusion"] for r in run["repeats"][1:])
+    assert run["repeats"][1]["exclusion"][0] in ("run stopped: KeyboardInterrupt", "run stopped: fault apply on lookup failed: refused")
     assert (d / "report.html").exists() and "incomplete" in (d / "report.html").read_text()
     downs = [c[1] for c in eng.calls if c[0] == "compose" and "down" in c]
     assert downs[-1].endswith("-obs")  # observability stack removed last, after repeat leftovers
