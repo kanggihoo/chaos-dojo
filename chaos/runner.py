@@ -511,8 +511,13 @@ class Run:
         if not ok:
             raise Abort("observability stack did not become ready in 300 s")
         admin = f"admin:{self.creds[compose.GF_PASSWORD]}"
-        sa = http("POST", f"http://{g}/api/serviceaccounts", {"name": "chaos-harness", "role": "Editor"}, auth=admin)
-        tok = http("POST", f"http://{g}/api/serviceaccounts/{sa['id']}/tokens", {"name": "run"}, auth=admin)
+        # Grafana answers /api/health before it can serve the admin API; retry inside the same readiness budget.
+        sa = wait_until(deadline, lambda: http("POST", f"http://{g}/api/serviceaccounts", {"name": f"chaos-harness-{secrets.token_hex(3)}", "role": "Editor"},
+                                               auth=admin, timeout=10), 2)
+        tok = sa and wait_until(deadline, lambda: http("POST", f"http://{g}/api/serviceaccounts/{sa['id']}/tokens", {"name": "run"},
+                                                       auth=admin, timeout=10), 2)
+        if not tok:
+            raise Abort("Grafana admin API did not become ready in 300 s")
         self.grafana = {"url": f"http://{g}", "token": tok["key"]}
         self.events.add("obs-ready")
         print(f"Grafana: http://{g}/d/chaos-lab/chaos-lab?var-run_id={self.run_id}&refresh=5s", flush=True)
