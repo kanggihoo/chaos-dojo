@@ -20,6 +20,7 @@ uv run chaos clean                                           # 끝난 run의 잔
 
 ## 문서
 
+- [진행 현황과 이어서 할 일](docs/STATUS.md)
 - [기획서](docs/PLAN.md)
 - [장기 로드맵](docs/ROADMAP.md)
 - [실험 하네스 spec](docs/specs/experiment-harness/spec.md) · [결정 기록](docs/specs/experiment-harness/decisions.md)
