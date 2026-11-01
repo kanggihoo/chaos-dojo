@@ -53,7 +53,7 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: [0001](../../adr/0001-pro
 ## D-10 Dependency wiring and faults
 - Status: settled
 - Decision: Every experiment dependency of the app goes through Toxiproxy whether or not a fault is planned; Toxiproxy injects network faults on a timeline; external APIs are faked by a pinned WireMock image plus stub data; harness paths are not proxied.
-- Rejected: proxy only on faulted paths → baseline vs fault would also change the network path · one generic harness-built fake → payment-like semantics cannot be expressed by status codes
+- Rejected: proxy only on faulted paths → baseline vs fault would also change the network path · one generic harness-built fake → payment-like semantics cannot be expressed by status codes · Toxiproxy API on a harness-only network → some engines (OrbStack) route between bridge networks, so the app and k6 reached the API; it now listens on loopback and the harness drives it with `docker exec toxiproxy-cli`
 
 ## D-11 Run lifecycle
 - Status: provisional

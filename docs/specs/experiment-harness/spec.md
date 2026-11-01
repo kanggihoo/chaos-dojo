@@ -20,7 +20,7 @@ Decisions: [decisions.md](decisions.md) · Glossary and ADRs: [GLOSSARY.md](../.
    - Alloy: `discovery.docker`, `prometheus.scrape`, `prometheus.receive_http`, `loki.source.docker`, `otelcol.receiver.otlp`
    - otel-lgtm: 내장 collector의 OTLP 입력, Prometheus·Loki·Tempo 질의 API, Grafana 서비스 계정 API
    - WireMock: admin API의 basic auth
-   - Toxiproxy: API 리슨 주소 지정
+   - Toxiproxy: API 리슨 주소 지정, 같은 이미지에 든 `toxiproxy-cli`의 프록시 생성·toggle·toxic 추가·제거
 4. Spring Boot 4의 `spring-boot-starter-opentelemetry`는 auto-configured `RestClient.Builder`로 만든 HTTP client 호출에 client span을 만든다.
 5. 저장소에는 지금 문서(README.md, docs/PLAN.md, docs/ROADMAP.md)만 있고, 코드·`.gitignore`·`.gitattributes`는 없다.
 
@@ -73,7 +73,7 @@ uv run chaos clean --run <run-id>
 - [x] AC-16: warmup은 고정 시간이고 `warmup_policy=fixed`로 기록된다; warmup이 끝나면 하네스는 warmup cohort의 quiescence 확인 → orders 테이블 비우기 → WireMock journal 비우기 → 경계 기록 순서로 진행한 뒤 measured load를 시작하고, 각 사건은 그 순서대로 `events.jsonl`에 남는다; quiescence가 30초 안에 확인되지 않으면 그 repeat를 invalid로 기록하고 같은 순서로 나머지 단계를 계속 진행한다. (D-11)
 - [x] AC-17: measured load는 scenario의 rate로 constant-arrival-rate executor가 건다; `dropped_iterations > 0`이거나 gracefulStop에 잘린 iteration이 있는 repeat는 invalid다; 잘린 iteration과 k6 timeout 요청은 개수와 이유를 기록하되 성공 latency 표본에는 넣지 않는다. (D-11, D-12)
 - [x] AC-18: Ctrl+C, 장애 적용·해제 API 호출 실패, Docker 엔진 API 호출의 오류 응답(데몬 연결 불가, 컨테이너·네트워크·볼륨의 생성·시작 요청 실패 포함) 중 하나가 일어나면 하네스는 새 부하와 이후 repeat를 멈추고, 부분 결과와 실행하지 않은 repeat를 이유와 함께 기록하고, 소유 자원 정리를 시도하고, 정리 결과까지 담아 `run.json`을 확정한 뒤 그 결과로 `report.html`을 쓰고 exit 3으로 끝난다. (D-11, D-21)
-- [ ] AC-19: api-slow는 lookup 프록시에 latency toxic을 걸고, api-down은 lookup 프록시를 비활성화하며, 둘 다 t0 기준 계획 시각에 적용하고 해제한다; 계획 시각, 실제 시각(Toxiproxy API가 성공을 응답한 시각, 호출 시각도 함께), 결과는 `events.jsonl`에 남는다; 실제 시각이 계획보다 1초 넘게 어긋난 repeat는 invalid다. (D-10, D-19, D-21)
+- [ ] AC-19: api-slow는 lookup 프록시에 latency toxic을 걸고, api-down은 lookup 프록시를 비활성화하며, 둘 다 t0 기준 계획 시각에 적용하고 해제한다; 계획 시각, 실제 시각(Toxiproxy 제어 호출이 성공으로 끝난 시각, 호출 시각도 함께), 결과는 `events.jsonl`에 남는다; 실제 시각이 계획보다 1초 넘게 어긋난 repeat는 invalid다. (D-10, D-19, D-21)
 - [ ] AC-20: baseline을 포함한 모든 scenario에서 앱의 DB 연결과 lookup 연결은 toxic이 없을 때도 Toxiproxy를 거친다; 결과에는 최종 topology와 프록시 버전·설정이 기록된다; 앱 컨테이너와 k6 컨테이너는 Toxiproxy API 포트에 연결할 수 없다; 하네스의 제어·수집 경로는 프록시를 거치지 않는다. (D-10)
 - [x] AC-21: 단계 timeout을 넘기거나, repeat 안의 컨테이너가 생성·시작된 뒤 준비 상태에 이르지 못하거나 비정상 종료한 repeat는 이유와 함께 incomplete가 되고 그 validity는 unknown이다; 하네스는 그 repeat를 정리하고 다음 repeat로 넘어간다; incomplete repeat가 하나라도 있으면 run은 exit 3으로 끝난다. (D-6, D-11)
 
@@ -491,7 +491,7 @@ collect 단계 안에는 하위 한도가 있다: quiescence 30 s, 도착 확인
   - problem·scenario·impl은 언어 중립 데이터이고, problem별 Python hook이 없다.
   - JSON Schema는 Python CLI와 이후 Rust CLI가 함께 쓴다.
   - 실행 코드가 들어 있는 asset은 다음처럼 가둔다.
-    - Toxiproxy API는 하네스 전용 네트워크의 주소에만 리슨하고, 앱과 k6는 그 네트워크에 붙지 않는다.
+    - Toxiproxy API는 Toxiproxy 컨테이너 안의 loopback(`127.0.0.1`)에만 리슨하고 공개 포트가 없다. 하네스는 같은 고정 이미지에 든 `toxiproxy-cli`를 `docker exec`로 실행해 제어한다. 네트워크 분리에 기대지 않는다: 브리지 네트워크끼리 라우팅을 막지 않는 엔진(OrbStack)이 있다. (D-10)
     - WireMock admin API는 run마다 생성한 basic auth 자격 증명을 요구한다.
     - 검사 SQL은 읽기 전용 트랜잭션에서 돈다.
     - WireMock webhook과 확장 기능은 끈다.
@@ -629,7 +629,7 @@ collect 단계 안에는 하위 한도가 있다: quiescence 30 s, 도착 확인
 - manifest와 descriptor로 생성한 Compose와 k6 옵션을 기대 파일과 비교한다. 비교 대상:
   - run 디렉터리 기준 상대 경로, `inputs/` 마운트
   - 라벨, 런타임 값 참조 치환, 프록시 경로
-  - Toxiproxy API 리슨 주소와 네트워크 분리
+  - Toxiproxy API 리슨 주소(loopback)와 공개 포트 없음
   - 자격 증명은 변수 참조로만 들어감
   - constant-arrival-rate와 rate·VU 값
   - probe scenario의 시작 시각(t0 + 80 s), 1초 간격, 62초 길이
