@@ -71,10 +71,9 @@ def test_dependencies_go_through_toxiproxy_and_its_api_is_isolated(spec):
     assert env["LOOKUP_BASE_URL"] == "http://toxiproxy:20001"
     assert env["OTLP_ENDPOINT"] == "http://alloy:4318" and env["CHAOS_REPEAT"] == "1"
     tp = rep["services"]["toxiproxy"]
-    assert tp["command"] == ["-host=toxiproxy-ctl", "-port=8474"]
-    assert tp["networks"]["ctl"]["aliases"] == ["toxiproxy-ctl"]
+    assert tp["command"] == ["-host=127.0.0.1", "-port=8474"] and "ports" not in tp
     for svc in ("app", "k6"):
-        assert "ctl" not in rep["services"][svc]["networks"] and "deps" not in rep["services"][svc]["networks"]
+        assert "deps" not in rep["services"][svc]["networks"]
     for dep in ("db", "lookup"):
         assert rep["services"][dep]["networks"] == ["deps"]
     for doc in (rep, yaml.safe_load(generated(spec)[1])):

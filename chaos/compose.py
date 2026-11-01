@@ -84,9 +84,9 @@ def repeat_compose(spec, run, repeat, image_volumes):
 
     services["toxiproxy"] = {
         "image": contract["images"]["toxiproxy"], "labels": lab("toxiproxy"),
-        "command": ["-host=toxiproxy-ctl", f"-port={TOXI_API}"],
-        "networks": {"ctl": {"aliases": ["toxiproxy-ctl"], "gw_priority": 100}, "deps": {}, "app": {}},
-        "ports": [f"127.0.0.1::{TOXI_API}"], **limits(spec["problem"]["proxy_budget"]), "logging": {"driver": "json-file"},
+        # Loopback only: some engines route between bridge networks, so network separation cannot hide the API (D-10).
+        "command": ["-host=127.0.0.1", f"-port={TOXI_API}"],
+        "networks": ["deps", "app"], **limits(spec["problem"]["proxy_budget"]), "logging": {"driver": "json-file"},
     }
 
     env = {k: resolve_value(v, deps, run_id, repeat) for k, v in impl["env"].items()}
@@ -109,7 +109,7 @@ def repeat_compose(spec, run, repeat, image_volumes):
                         "K6_NO_USAGE_REPORT": "true", "K6_AUTO_EXTENSION_RESOLUTION": "false"},
         "profiles": ["load"], "logging": {"driver": "json-file"},
     }
-    nets = {n: {"labels": lab("network")} for n in ("app", "deps", "ctl")}
+    nets = {n: {"labels": lab("network")} for n in ("app", "deps")}
     nets["run"] = {"external": True, "name": run["run_network"]}
     return {"name": project, "services": services, "networks": nets, "volumes": volumes}
 

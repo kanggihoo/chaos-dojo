@@ -66,17 +66,11 @@ services:
       chaos-lab.role: toxiproxy
       chaos-lab.repeat: '1'
     command:
-    - -host=toxiproxy-ctl
+    - -host=127.0.0.1
     - -port=8474
     networks:
-      ctl:
-        aliases:
-        - toxiproxy-ctl
-        gw_priority: 100
-      deps: {}
-      app: {}
-    ports:
-    - 127.0.0.1::8474
+    - deps
+    - app
     cpus: '0.25'
     mem_limit: 128m
     logging:
@@ -157,11 +151,6 @@ networks:
       chaos-lab.role: network
       chaos-lab.repeat: '1'
   deps:
-    labels:
-      chaos-lab.run-id: 20261031-000000-external-api-api-slow-naive-abc123
-      chaos-lab.role: network
-      chaos-lab.repeat: '1'
-  ctl:
     labels:
       chaos-lab.run-id: 20261031-000000-external-api-api-slow-naive-abc123
       chaos-lab.role: network

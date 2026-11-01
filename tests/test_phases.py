@@ -5,6 +5,8 @@ import socket
 import threading
 import time
 
+import pytest
+
 from chaos import runner
 
 
@@ -63,13 +65,11 @@ def test_annotations_never_delay_fault_actions(tmp_path, monkeypatch):
     rp = runner.Repeat.__new__(runner.Repeat)
     rp.r, rp.n, rp.faults, rp.fault_error = run, 1, [], None
     rp.events = runner.Events(tmp_path / "events.jsonl")
-    rp.toxi = "toxi"
+    toxi_calls = []
+    rp.toxi = lambda *a: toxi_calls.append(runner.now()) or ""
     rp.k6 = Stub()
     rp.k6.poll = lambda: None
     run.scenario = {"faults": [{"target": "lookup", "action": "latency", "value_ms": 2000, "apply_at_s": 0.3, "remove_at_s": 0.6}]}
-    toxi_calls = []
-    real_http = runner.http
-    monkeypatch.setattr(runner, "http", lambda m, url, *a, **k: toxi_calls.append(runner.now()) if url.startswith("http://toxi") else real_http(m, url, *a, **k))
     for _ in range(10):
         run.annotate("noise", ["x"])  # fill the queue; must not block
     rp.t0 = runner.now()
@@ -80,6 +80,25 @@ def test_annotations_never_delay_fault_actions(tmp_path, monkeypatch):
     kinds = [json.loads(l)["kind"] for l in (tmp_path / "events.jsonl").read_text().splitlines()]
     assert kinds == ["fault-apply", "fault-remove"]
 
+
+@pytest.mark.parametrize("outputs,error", [(["Proxy lookup is now disabled", "Proxy lookup is now enabled"], None),
+                                           (["Proxy lookup is now enabled"], "fault apply on lookup failed")])
+def test_down_fault_checks_the_toggled_state(tmp_path, outputs, error):
+    run = runner.Run.__new__(runner.Run)
+    run.annotate = lambda *a: None
+    run.scenario = {"faults": [{"target": "lookup", "action": "down", "apply_at_s": 0, "remove_at_s": 0.1}]}
+    rp = runner.Repeat.__new__(runner.Repeat)
+    rp.r, rp.n, rp.faults, rp.fault_error = run, 1, [], None
+    rp.events = runner.Events(tmp_path / "events.jsonl")
+    calls, outs = [], iter(outputs)
+    rp.toxi = lambda *a: calls.append(a) or next(outs)
+    rp.k6 = Stub()
+    rp.k6.poll = lambda: None
+    rp.t0 = runner.now()
+    rp.fault_schedule()
+    assert all(c == ("toggle", "lookup") for c in calls)
+    assert (rp.fault_error or "").startswith(error or "") and (error is None) == (rp.fault_error is None)
+    assert len(rp.faults) == (2 if error is None else 0)
 
 def validity_repeat(tmp_path, **kw):
     rp = runner.Repeat.__new__(runner.Repeat)

@@ -660,15 +660,15 @@ class Repeat:
         self.start_stats()
         deps = [d["name"] for d in r.spec["deps"]]
         eng.compose(r.dir, self.project, self.file, "up", "-d", "--no-deps", *deps, "toxiproxy", timeout=max(5, (deadline - now()) / 1000))
-        self.toxi = self.ready(deadline, "toxiproxy", compose.TOXI_API, lambda a: http("GET", f"http://{a}/version", timeout=2))
+        if not wait_until(deadline, lambda: self.toxi("list")):
+            raise Incomplete("toxiproxy did not become ready before the prepare timeout")
         self.dep_addr = {}
         for d in r.spec["deps"]:
             check = (lambda a, d=d: self.db_connect(a, d["name"]).close() or True) if d["kind"] == "postgres" else \
                     (lambda a: http("GET", f"http://{a}/__admin/health", auth=r.creds[compose.WM_AUTH], timeout=2))
             self.dep_addr[d["name"]] = self.ready(deadline, d["name"], d["port"], check)
-        proxies = [{"name": d["name"], "listen": f"0.0.0.0:{compose.proxy_port(r.spec['deps'], d['name'])}", "upstream": f"{d['name']}:{d['port']}",
-                    "enabled": True} for d in r.spec["deps"]]
-        http("POST", f"http://{self.toxi}/populate", proxies)
+        for d in r.spec["deps"]:
+            self.toxi("create", "-l", f"0.0.0.0:{compose.proxy_port(r.spec['deps'], d['name'])}", "-u", f"{d['name']}:{d['port']}", d["name"])
         eng.compose(r.dir, self.project, self.file, "up", "-d", "--no-deps", "app", timeout=max(5, (deadline - now()) / 1000))
         mport = r.impl["ports"]["management"]
         self.mgmt = self.ready(deadline, "app", mport,
@@ -679,8 +679,13 @@ class Repeat:
         self.events.add("first-scrape-ok")
         self.extra["scrape_targets"] = [{"job": "prometheus.scrape.app", "network": r.run_ctx["run_network"], "port": mport,
                                          "path": r.impl["metrics_path"]}]
-        self.extra["topology"] = {"toxiproxy_version": http("GET", f"http://{self.toxi}/version"),
-                                  "proxies": http("GET", f"http://{self.toxi}/proxies"),
+        proxies = {}
+        for line in self.toxi("list").splitlines():
+            f = line.split("\t")
+            if len(f) == 5:
+                proxies[f[0]] = {"name": f[0], "listen": f[1], "upstream": f[2], "enabled": f[3] == "enabled", "toxics": int(f[4])}
+        self.extra["topology"] = {"toxiproxy_version": self.toxi("--version").split()[-1], "api_listen": f"127.0.0.1:{compose.TOXI_API}",
+                                  "proxies": proxies,
                                   "api_isolation": self.api_isolation()}
         iso = self.extra["topology"]["api_isolation"]
         if iso["reachable"] or not all(iso["control_ok"].values()):
@@ -689,12 +694,16 @@ class Repeat:
         m = re.search(rb"chaos-resolved-settings (\{.*\})", logs.stdout + logs.stderr)
         self.extra["app"] = {"image_id": r.app_image, "resolved": json.loads(m.group(1)) if m else None}
 
+    def toxi(self, *args):
+        """Toxiproxy's API listens on its container's loopback; the harness reaches it only through the bundled CLI (D-10)."""
+        return self.eng.text("exec", f"{self.project}-toxiproxy-1", "/toxiproxy-cli", *args, timeout=5)
+
     def api_isolation(self):
         """AC-20: from inside the app and a k6 container, try every Toxiproxy address on the API port.
         A proxy listener on the same host is the control, so a broken probe cannot pass as isolation."""
         ips = self.eng.text("inspect", "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}",
                             f"{self.project}-toxiproxy-1").split()
-        hosts = " ".join(["toxiproxy", "toxiproxy-ctl", *ips])
+        hosts = " ".join(["toxiproxy", *ips])
         control = f"toxiproxy {compose.proxy_port(self.r.spec['deps'], self.r.spec['deps'][0]['name'])}"
         app = self.eng.text("exec", f"{self.project}-app-1", "bash", "-c",
                             f'probe() {{ timeout 2 bash -c "</dev/tcp/$1/$2" 2>/dev/null; }}; probe {control} && echo control-ok; '
@@ -915,7 +924,7 @@ class Repeat:
     fault_error = None
 
     def fault_schedule(self):
-        """Apply and remove every fault at t0 + planned time; the confirmed time is the API's success response."""
+        """Apply and remove every fault at t0 + planned time; the confirmed time is when the control call returned success."""
         acts = []
         for i, f in enumerate(self.r.scenario["faults"]):
             acts += [(f["apply_at_s"], "apply", i, f), (f["remove_at_s"], "remove", i, f)]
@@ -927,15 +936,17 @@ class Repeat:
             dispatched = now()
             try:
                 name = f"chaos-fault-{i}"
-                base = f"http://{self.toxi}/proxies/{f['target']}"
+                t = f["target"]
                 if f["action"] == "latency":
                     if what == "apply":
-                        http("POST", f"{base}/toxics", {"name": name, "type": "latency", "stream": "upstream",
-                                                       "attributes": {"latency": f["value_ms"], "jitter": 0}}, timeout=3)
+                        self.toxi("toxic", "add", "-t", "latency", "-a", f"latency={f['value_ms']}", "-a", "jitter=0", "--upstream", "-n", name, t)
                     else:
-                        http("DELETE", f"{base}/toxics/{name}", timeout=3)
+                        self.toxi("toxic", "remove", "-n", name, t)
                 else:
-                    http("POST", base, {"enabled": what != "apply"}, timeout=3)
+                    want = "disabled" if what == "apply" else "enabled"
+                    out = self.toxi("toggle", t)  # the CLI only toggles, so check it landed in the intended state
+                    if f"now {want}" not in out:
+                        raise RuntimeError(f"toggle left {t} in an unexpected state: {out.strip()}")
                 confirmed = now()
             except Exception as e:  # noqa: BLE001
                 self.events.add(f"fault-{what}", target=f["target"], action=f["action"], planned_ms=planned, dispatched_ms=dispatched,
