@@ -660,7 +660,7 @@ class Repeat:
         self.start_stats()
         deps = [d["name"] for d in r.spec["deps"]]
         eng.compose(r.dir, self.project, self.file, "up", "-d", "--no-deps", *deps, "toxiproxy", timeout=max(5, (deadline - now()) / 1000))
-        if not wait_until(deadline, lambda: self.toxi("list")):
+        if not wait_until(deadline, lambda: self.toxi("list") is not None):  # empty output before any proxy exists
             raise Incomplete("toxiproxy did not become ready before the prepare timeout")
         self.dep_addr = {}
         for d in r.spec["deps"]:
