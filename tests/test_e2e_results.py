@@ -75,6 +75,9 @@ def test_recorded_run(run):
             assert {"planned_ms", "dispatched_ms", "confirmed_ms"} <= set(f) and f["result"] == "ok"
         # AC-20
         assert {p["name"] for p in doc["topology"]["proxies"].values()} == {"db", "lookup"}
+        iso = doc["topology"].get("api_isolation")
+        if iso is not None:  # runs recorded before the isolation probe existed lack it
+            assert iso["reachable"] == [] and all(iso["control_ok"].values()) and set(iso["control_ok"]) == {"app", "k6"}
         env = c["services"]["app"]["environment"]
         assert "toxiproxy:" in env["DB_URL"] and "toxiproxy:" in env["LOOKUP_BASE_URL"]
         # AC-25

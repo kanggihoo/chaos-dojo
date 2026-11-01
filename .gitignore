@@ -5,3 +5,6 @@ __pycache__/
 .hypothesis/
 problems/*/app/build/
 problems/*/app/.gradle/
+.claude/
+.agents/
+skills-lock.json

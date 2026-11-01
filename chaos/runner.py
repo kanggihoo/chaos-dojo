@@ -676,10 +676,34 @@ class Repeat:
         self.extra["scrape_targets"] = [{"job": "prometheus.scrape.app", "network": r.run_ctx["run_network"], "port": mport,
                                          "path": r.impl["metrics_path"]}]
         self.extra["topology"] = {"toxiproxy_version": http("GET", f"http://{self.toxi}/version"),
-                                  "proxies": http("GET", f"http://{self.toxi}/proxies")}
+                                  "proxies": http("GET", f"http://{self.toxi}/proxies"),
+                                  "api_isolation": self.api_isolation()}
+        iso = self.extra["topology"]["api_isolation"]
+        if iso["reachable"] or not all(iso["control_ok"].values()):
+            self.invalid.append(f"Toxiproxy API isolation not shown: {iso}")
         logs = eng.docker("logs", f"{self.project}-app-1", check=False)
         m = re.search(rb"chaos-resolved-settings (\{.*\})", logs.stdout + logs.stderr)
         self.extra["app"] = {"image_id": r.app_image, "resolved": json.loads(m.group(1)) if m else None}
+
+    def api_isolation(self):
+        """AC-20: from inside the app and a k6 container, try every Toxiproxy address on the API port.
+        A proxy listener on the same host is the control, so a broken probe cannot pass as isolation."""
+        ips = self.eng.text("inspect", "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}",
+                            f"{self.project}-toxiproxy-1").split()
+        hosts = " ".join(["toxiproxy", "toxiproxy-ctl", *ips])
+        control = f"toxiproxy {compose.proxy_port(self.r.spec['deps'], self.r.spec['deps'][0]['name'])}"
+        app = self.eng.text("exec", f"{self.project}-app-1", "bash", "-c",
+                            f'probe() {{ timeout 2 bash -c "</dev/tcp/$1/$2" 2>/dev/null; }}; probe {control} && echo control-ok; '
+                            f'for h in {hosts}; do probe $h {compose.TOXI_API} && echo $h; done; true', check=False)
+        k6 = self.eng.compose(self.r.dir, self.project, self.file, "run", "--rm", "-T", "--no-deps", "--entrypoint", "sh", "k6", "-c",
+                              f"nc -z -w 2 {control} && echo control-ok; for h in {hosts}; do nc -z -w 2 $h {compose.TOXI_API} 2>/dev/null && echo $h; done; true",
+                              check=False, timeout=60).stdout.decode("utf-8", "replace")
+        out = {"probed": hosts.split(), "port": compose.TOXI_API, "control_ok": {}, "reachable": []}
+        for who, text in (("app", app), ("k6", k6)):
+            lines = text.split()
+            out["control_ok"][who] = "control-ok" in lines
+            out["reachable"] += [f"{who}->{h}" for h in lines if h != "control-ok"]
+        return out
 
     def ready(self, deadline, service, port, check):
         def probe():
