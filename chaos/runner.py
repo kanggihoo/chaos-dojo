@@ -479,14 +479,18 @@ class Run:
         ctx_snapshot = self.dir / "inputs" / "problems" / self.problem["id"] / Path(ctx_rel).relative_to(f"problems/{self.problem['id']}")
         # Reproducible build: same sources give the same image ID, so every impl of a problem runs one identical image.
         build_flags = ["--provenance=false", "--sbom=false", "--build-arg", "SOURCE_DATE_EPOCH=0"]
-        r = self.eng.docker("build", "-q", *build_flags, str(ctx_snapshot), timeout=1800)
-        app_id = r.stdout.decode().strip().splitlines()[-1]
-        img = self.eng.json("image", "inspect", app_id)[0]
+        build_input = hash_closure([ctx_snapshot])
+        # Tagged and inspected by tag: with the containerd image store, `build -q` prints the config digest, which may name no stored image,
+        # while the stored image's ID is its manifest digest.
+        tag = f"chaos-lab/{self.problem['id']}-app:{build_input[:12]}"
+        self.eng.docker("build", "-q", *build_flags, "-t", tag, str(ctx_snapshot), timeout=1800)
+        img = self.eng.json("image", "inspect", tag)[0]
+        app_id = img["Id"]
         bg = build_git(self.root, ctx_rel)
         if bg["patch"]:
             (self.dir / "inputs" / "app-dirty.patch").write_text(bg["patch"], encoding="utf-8")
         images["app"] = {"image_id": app_id, "platform": f"{img['Os']}/{img['Architecture']}", "commit": bg["commit"], "build_flags": build_flags,
-                         "dirty": bg["dirty"], "build_input_sha256": hash_closure([ctx_snapshot]),
+                         "dirty": bg["dirty"], "build_input_sha256": build_input,
                          "dirty_patch": "inputs/app-dirty.patch" if bg["patch"] else None}
         self.app_image = app_id
         self.identity["images"] = images
