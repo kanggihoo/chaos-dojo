@@ -23,7 +23,7 @@ uv run chaos run external-api/<scenario> --impl <impl>   # 실제 실행: run �
 ## 작업 규칙
 
 - **spec이 계약이다.** 수용 기준, 인터페이스, 제약을 바꿔야 하는 코드는 쓰기 전에 사용자에게 해당 문구와 이유를 보여 주고 결정을 받는다. 바꾸기로 하면 `decisions.md` 항목과 spec을 고치고 `node ~/.claude/skills/wf-artifacts/check.mjs spec experiment-harness --require-approved`가 PASS인지 확인한 뒤, 사용자 승인을 받고 `Spec-Amended:` 트레일러로 커밋한다.
-- 브랜치 `feat/experiment-harness`의 모든 커밋은 `Spec: docs/specs/experiment-harness/spec.md` 트레일러로 끝난다. AC 체크박스는 테스트나 기록된 run이 증명했을 때만 체크한다.
+- 모든 커밋은 `Spec: docs/specs/experiment-harness/spec.md` 트레일러로 끝난다. AC 체크박스는 테스트나 기록된 run이 증명했을 때만 체크한다.
 - 검토는 Codex에게 받고, Codex가 최종 승인하면 다음 단계로 넘어간다.
 - 필요한 것만 구현한다: 가장 작은 완전한 변경, 이미 있는 helper 재사용, 의존성 추가 없이.
 - 고정 스택: Spring Boot 4, Java 21, JdbcTemplate(JPA 아님), 하네스는 uv 기반 Python. OS별 분기 코드는 쓰지 않는다(OS 차이는 psutil·platformdirs 안에서만).
