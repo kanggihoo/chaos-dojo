@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "n": 1,
+  "verdicts": {
+    "completion": {
+      "value": "incomplete",
+      "reasons": [
+        "toxiproxy did not become ready before the prepare timeout"
+      ]
+    },
+    "validity": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "correctness": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "slo": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": null
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-11-01T21:41:04.187Z",
+      "end": "2026-11-01T21:46:04.629Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-11-01T21:46:04.731Z",
+      "end": "2026-11-01T21:46:05.592Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": null,
+  "measured_end_ms": null,
+  "boundary_ms": null,
+  "faults": [],
+  "values": {},
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 4.25,
+      "cpu_max_pct": 120.07
+    },
+    "alloy": {
+      "cpu_mean_pct": 0.91,
+      "cpu_max_pct": 36.65
+    }
+  },
+  "compose_sha256": "e9e5c5c01f86c9c3b832eeb88f8dd317e4a3ce71efdf7e36fc28c7383f8188a3",
+  "clock_start": {
+    "offset_ms": 18.1,
+    "rtt_ms": 43.9
+  },
+  "log_truncation": {}
+}

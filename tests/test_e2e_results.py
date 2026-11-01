@@ -38,7 +38,11 @@ def test_recorded_run(run):
     # AC-38: identity
     assert set(ident["engine"]) == {"product", "server_version", "os_type", "architecture", "cpus", "memory_bytes"}
     assert {"scenario_sha256", "problem_sha256", "workload", "seed", "contract"} <= set(ident["comparison"])
-    assert {"commit", "dirty"} <= set(ident["harness"]) and ident["images"]["app"]["image_id"].startswith("sha256:")
+    assert {"commit", "dirty"} <= set(ident["harness"])
+    if "images" not in ident:  # stopped while preparing images
+        assert all(x["completion"] == "not-run" for x in r["repeats"]) and r["exit_code"] == 3
+        return
+    assert ident["images"]["app"]["image_id"].startswith("sha256:")
     for name, img in ident["images"].items():
         if name != "app":
             assert img["index_digest"].startswith("sha256:") and img["platform"] and img["image_id"]
@@ -77,7 +81,9 @@ def test_recorded_run(run):
         assert {p["name"] for p in doc["topology"]["proxies"].values()} == {"db", "lookup"}
         iso = doc["topology"].get("api_isolation")
         if iso is not None:  # runs recorded before the isolation probe existed lack it
-            assert iso["reachable"] == [] and all(iso["control_ok"].values()) and set(iso["control_ok"]) == {"app", "k6"}
+            assert set(iso["control_ok"]) == {"app", "k6"}
+            if iso["reachable"] or not all(iso["control_ok"].values()):  # e.g. the engine routed between networks: never a valid repeat
+                assert doc["verdicts"]["validity"]["value"] == "invalid"
         env = c["services"]["app"]["environment"]
         assert "toxiproxy:" in env["DB_URL"] and "toxiproxy:" in env["LOOKUP_BASE_URL"]
         # AC-25

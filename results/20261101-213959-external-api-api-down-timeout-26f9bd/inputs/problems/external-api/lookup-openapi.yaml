@@ -1,0 +1,24 @@
+openapi: 3.1.0
+info: {title: Product lookup (external API fake), version: "1"}
+paths:
+  /products/{productId}:
+    get:
+      parameters:
+        - {name: productId, in: path, required: true, schema: {type: string, pattern: "^p-[0-9]{3}$"}}
+        - {name: X-Request-Id, in: header, required: false, schema: {type: string}}
+        - {name: X-Chaos-Cohort, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: product
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [productId, price, currency, available]
+                properties:
+                  productId: {type: string, pattern: "^p-[0-9]{3}$"}
+                  price: {type: integer, minimum: 1, maximum: 1000000}
+                  currency: {const: KRW}
+                  available: {type: boolean}
+        "404": {description: unknown product}

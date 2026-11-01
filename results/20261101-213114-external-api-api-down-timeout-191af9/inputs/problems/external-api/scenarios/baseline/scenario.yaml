@@ -1,0 +1,13 @@
+contract_version: 1
+id: baseline
+problem: external-api
+workload:
+  script: ../../k6/orders.js
+  rate: 50
+  warmup_s: 30
+  measured_s: 120
+  graceful_stop_s: 20
+  timeout_s: 15
+  seed: 42
+faults: []
+phase_timeouts_s: {prepare: 300, warmup: 60, measured: 160, recovery: 70, collect: 180, cleanup: 120}

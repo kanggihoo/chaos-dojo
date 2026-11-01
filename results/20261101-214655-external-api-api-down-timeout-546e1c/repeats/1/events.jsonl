@@ -1,0 +1,24 @@
+{"seq": 1, "kind": "phase-start", "at": "2026-11-01T21:48:01.710Z", "phase": "prepare", "timeout_s": 300}
+{"seq": 2, "kind": "first-scrape-ok", "at": "2026-11-01T21:48:16.966Z"}
+{"seq": 3, "kind": "phase-end", "at": "2026-11-01T21:48:17.894Z", "phase": "prepare"}
+{"seq": 4, "kind": "phase-start", "at": "2026-11-01T21:48:17.894Z", "phase": "warmup", "timeout_s": 60}
+{"seq": 5, "kind": "quiescence", "at": "2026-11-01T21:48:49.783Z", "cohorts": ["warmup"], "ok": true}
+{"seq": 6, "kind": "orders-cleared", "at": "2026-11-01T21:48:49.809Z"}
+{"seq": 7, "kind": "journal-cleared", "at": "2026-11-01T21:48:49.819Z"}
+{"seq": 8, "kind": "boundary", "at": "2026-11-01T21:48:49.819Z", "at_ms": 1793569729819.615}
+{"seq": 9, "kind": "phase-end", "at": "2026-11-01T21:48:49.819Z", "phase": "warmup"}
+{"seq": 10, "kind": "phase-start", "at": "2026-11-01T21:48:49.820Z", "phase": "measured", "timeout_s": 160}
+{"seq": 11, "kind": "t0", "at": "2026-11-01T21:48:50.341Z", "engine_ms": 1793569730273, "host_ms": 1793569730256.4}
+{"seq": 12, "kind": "fault-apply", "at": "2026-11-01T21:49:30.410Z", "target": "lookup", "action": "down", "value_ms": null, "planned_ms": 1793569770256.4, "dispatched_ms": 1793569770261.3928, "confirmed_ms": 1793569770410.7258, "result": "ok"}
+{"seq": 13, "kind": "fault-remove", "at": "2026-11-01T21:50:10.546Z", "target": "lookup", "action": "down", "value_ms": null, "planned_ms": 1793569810256.4, "dispatched_ms": 1793569810257.7268, "confirmed_ms": 1793569810546.7908, "result": "ok"}
+{"seq": 14, "kind": "measured-end", "at": "2026-11-01T21:50:50.351Z", "host_ms": 1793569850344.776}
+{"seq": 15, "kind": "phase-end", "at": "2026-11-01T21:50:50.352Z", "phase": "measured"}
+{"seq": 16, "kind": "phase-start", "at": "2026-11-01T21:50:50.352Z", "phase": "recovery", "timeout_s": 70}
+{"seq": 17, "kind": "phase-end", "at": "2026-11-01T21:50:50.758Z", "phase": "recovery"}
+{"seq": 18, "kind": "phase-start", "at": "2026-11-01T21:50:50.758Z", "phase": "convergence", "timeout_s": null}
+{"seq": 19, "kind": "phase-end", "at": "2026-11-01T21:50:50.758Z", "phase": "convergence"}
+{"seq": 20, "kind": "phase-start", "at": "2026-11-01T21:50:50.758Z", "phase": "collect", "timeout_s": 180}
+{"seq": 21, "kind": "phase-end", "at": "2026-11-01T21:50:55.409Z", "phase": "collect"}
+{"seq": 22, "kind": "phase-start", "at": "2026-11-01T21:50:55.409Z", "phase": "cleanup", "timeout_s": 120}
+{"seq": 23, "kind": "cleanup", "at": "2026-11-01T21:50:56.857Z", "left": []}
+{"seq": 24, "kind": "phase-end", "at": "2026-11-01T21:50:56.857Z", "phase": "cleanup"}

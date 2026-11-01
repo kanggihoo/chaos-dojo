@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "n": 2,
+  "verdicts": {
+    "completion": {
+      "value": "incomplete",
+      "reasons": [
+        "run stopped: KeyboardInterrupt"
+      ]
+    },
+    "validity": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "correctness": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "slo": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-11-01T21:35:22.117Z",
+      "end": "2026-11-01T21:35:40.710Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-11-01T21:35:40.711Z",
+      "end": "2026-11-01T21:35:41.960Z"
+    }
+  ],
+  "faults": [],
+  "compose_sha256": "9653077cebf02bca01fce8fc7d1553b069d16a37584bf040aea2b296a1d5194b",
+  "clock_start": {
+    "offset_ms": 17.7,
+    "rtt_ms": 59.8
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-7fa135-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    },
+    "api_isolation": {
+      "probed": [
+        "toxiproxy",
+        "toxiproxy-ctl",
+        "192.168.117.2",
+        "192.168.147.2",
+        "192.168.148.4"
+      ],
+      "port": 8474,
+      "control_ok": {
+        "app": true,
+        "k6": true
+      },
+      "reachable": [
+        "app->192.168.147.2",
+        "k6->192.168.147.2"
+      ]
+    }
+  },
+  "app": {
+    "image_id": "sha256:ac67c58af53caa82cc437d3a6632e49f7732d075317f245690ac0a445c3c9c65",
+    "resolved": {
+      "chaos.impl": "timeout",
+      "chaos.lookup.response-timeout-ms": "300",
+      "chaos.lookup.deadline-ms": "300",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  }
+}

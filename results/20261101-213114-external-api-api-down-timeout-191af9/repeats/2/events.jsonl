@@ -1,0 +1,5 @@
+{"seq": 1, "kind": "phase-start", "at": "2026-11-01T21:35:22.118Z", "phase": "prepare", "timeout_s": 300}
+{"seq": 2, "kind": "first-scrape-ok", "at": "2026-11-01T21:35:40.108Z"}
+{"seq": 3, "kind": "phase-end", "at": "2026-11-01T21:35:40.710Z", "phase": "prepare"}
+{"seq": 4, "kind": "phase-start", "at": "2026-11-01T21:35:40.711Z", "phase": "warmup", "timeout_s": 60}
+{"seq": 5, "kind": "phase-end", "at": "2026-11-01T21:35:41.960Z", "phase": "warmup"}

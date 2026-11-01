@@ -1,0 +1,24 @@
+ Container chaos-809c3d-r1-k6-run-d204f5a6ffe1 Creating 
+ Container chaos-809c3d-r1-k6-run-d204f5a6ffe1 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=2.54ms med=5.22ms p(99)=308.18ms max=414.39ms
+      { expected_response:true }...: min=2.54ms med=5.11ms p(99)=185.57ms max=304.16ms
+    http_req_failed................: 4.93%  74 out of 1501
+    http_reqs......................: 1501   50.019187/s
+
+    EXECUTION
+    iteration_duration.............: min=2.91ms med=5.9ms  p(99)=309.37ms max=415.52ms
+    iterations.....................: 1501   50.019187/s
+    vus............................: 0      min=0          max=16 
+    vus_max........................: 900    min=900        max=900
+
+    NETWORK
+    data_received..................: 414 kB 14 kB/s
+    data_sent......................: 350 kB 12 kB/s
+
+
+

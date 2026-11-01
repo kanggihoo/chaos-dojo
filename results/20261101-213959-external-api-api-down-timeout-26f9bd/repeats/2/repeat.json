@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "n": 2,
+  "verdicts": {
+    "completion": {
+      "value": "incomplete",
+      "reasons": [
+        "run stopped: KeyboardInterrupt"
+      ]
+    },
+    "validity": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "correctness": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    },
+    "slo": {
+      "value": "unknown",
+      "reasons": [
+        "repeat is incomplete"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-11-01T21:46:05.594Z",
+      "end": "2026-11-01T21:46:25.150Z"
+    }
+  ],
+  "faults": [],
+  "compose_sha256": "94de18d351148991cb915f808b504c6bfe20fffaaf9535a7fccec0dbc878f014",
+  "clock_start": {
+    "offset_ms": 16.3,
+    "rtt_ms": 40.0
+  },
+  "log_truncation": {}
+}

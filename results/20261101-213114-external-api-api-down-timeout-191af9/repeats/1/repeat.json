@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "n": 1,
+  "verdicts": {
+    "completion": {
+      "value": "complete",
+      "reasons": []
+    },
+    "validity": {
+      "value": "invalid",
+      "reasons": [
+        "Toxiproxy API isolation not shown: {'probed': ['toxiproxy', 'toxiproxy-ctl', '192.168.117.2', '192.168.147.2', '192.168.148.4'], 'port': 8474, 'control_ok': {'app': True, 'k6': True}, 'reachable': ['app->192.168.147.2', 'k6->192.168.147.2']}"
+      ]
+    },
+    "correctness": {
+      "value": "pass",
+      "reasons": []
+    },
+    "slo": {
+      "budget_ms": 500,
+      "threshold": 0.99,
+      "value": "missed",
+      "reasons": [
+        "in-budget 201 ratio 0.6466 < 0.99"
+      ],
+      "in_budget_ratio": 0.6465589068488585,
+      "issued": 6001,
+      "status_201": 3891,
+      "in_budget_201": 3880,
+      "k6_timeouts": 0,
+      "client_errors": 0,
+      "cut_off": 0,
+      "p99_201_ms": 290.0,
+      "p50_201_ms": 5.0,
+      "segments": {
+        "before": {
+          "issued": 2002,
+          "status_201": 2001,
+          "in_budget_201": 2001,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 70.0,
+          "p50_201_ms": 5.0,
+          "in_budget_ratio": 0.9995004995004995
+        },
+        "during": {
+          "issued": 1999,
+          "status_201": 1,
+          "in_budget_201": 1,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 36.0,
+          "p50_201_ms": 36.0,
+          "in_budget_ratio": 0.0005002501250625312
+        },
+        "after": {
+          "issued": 2000,
+          "status_201": 1889,
+          "in_budget_201": 1878,
+          "k6_timeouts": 0,
+          "client_errors": 0,
+          "cut_off": 0,
+          "p99_201_ms": 402.0,
+          "p50_201_ms": 5.0,
+          "in_budget_ratio": 0.939
+        }
+      }
+    }
+  },
+  "recovery": {
+    "applicable": true,
+    "recovered": true,
+    "removed_at": 1793568874231.2551,
+    "time_to_recovery_ms": 991.844970703125,
+    "probes_counted": 5
+  },
+  "phases": [
+    {
+      "name": "prepare",
+      "timeout_s": 300,
+      "start": "2026-11-01T21:32:22.006Z",
+      "end": "2026-11-01T21:32:41.179Z"
+    },
+    {
+      "name": "warmup",
+      "timeout_s": 60,
+      "start": "2026-11-01T21:32:41.179Z",
+      "end": "2026-11-01T21:33:13.661Z"
+    },
+    {
+      "name": "measured",
+      "timeout_s": 160,
+      "start": "2026-11-01T21:33:13.662Z",
+      "end": "2026-11-01T21:35:14.320Z"
+    },
+    {
+      "name": "recovery",
+      "timeout_s": 70,
+      "start": "2026-11-01T21:35:14.320Z",
+      "end": "2026-11-01T21:35:14.728Z"
+    },
+    {
+      "name": "convergence",
+      "timeout_s": null,
+      "start": "2026-11-01T21:35:14.728Z",
+      "not_applicable": "not applicable: the problem declares no convergence check",
+      "end": "2026-11-01T21:35:14.728Z"
+    },
+    {
+      "name": "collect",
+      "timeout_s": 180,
+      "start": "2026-11-01T21:35:14.729Z",
+      "end": "2026-11-01T21:35:20.003Z"
+    },
+    {
+      "name": "cleanup",
+      "timeout_s": 120,
+      "start": "2026-11-01T21:35:20.004Z",
+      "end": "2026-11-01T21:35:22.090Z"
+    }
+  ],
+  "warmup_policy": "fixed",
+  "t0_ms": 1793568794220.1,
+  "measured_end_ms": 1793568914313.528,
+  "boundary_ms": 1793568793661.682,
+  "faults": [
+    {
+      "seq": 12,
+      "kind": "fault-apply",
+      "at": "2026-11-01T21:33:54.251Z",
+      "target": "lookup",
+      "action": "down",
+      "value_ms": null,
+      "planned_ms": 1793568834220.1,
+      "dispatched_ms": 1793568834223.316,
+      "confirmed_ms": 1793568834251.4648,
+      "result": "ok"
+    },
+    {
+      "seq": 13,
+      "kind": "fault-remove",
+      "at": "2026-11-01T21:34:34.231Z",
+      "target": "lookup",
+      "action": "down",
+      "value_ms": null,
+      "planned_ms": 1793568874220.1,
+      "dispatched_ms": 1793568874223.5059,
+      "confirmed_ms": 1793568874231.2551,
+      "result": "ok"
+    }
+  ],
+  "values": {
+    "in_budget_ratio": 0.6465589068488585,
+    "p99_201_ms": 290.0,
+    "p50_201_ms": 5.0,
+    "time_to_recovery_ms": 991.844970703125,
+    "ambiguous": 0,
+    "violations": 0
+  },
+  "observability_usage": {
+    "lgtm": {
+      "cpu_mean_pct": 13.76,
+      "cpu_max_pct": 334.39
+    },
+    "alloy": {
+      "cpu_mean_pct": 2.07,
+      "cpu_max_pct": 30.05
+    }
+  },
+  "compose_sha256": "648860ebbf03255ce1b7ff7748675a705cc2cf3e7dd159e4c0003272b1a2018d",
+  "clock_start": {
+    "offset_ms": 15.9,
+    "rtt_ms": 40.6
+  },
+  "scrape_targets": [
+    {
+      "job": "prometheus.scrape.app",
+      "network": "chaos-7fa135-run",
+      "port": 8081,
+      "path": "/actuator/prometheus"
+    }
+  ],
+  "topology": {
+    "toxiproxy_version": {
+      "version": "2.12.0"
+    },
+    "proxies": {
+      "db": {
+        "name": "db",
+        "listen": "[::]:20000",
+        "upstream": "db:5432",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      },
+      "lookup": {
+        "name": "lookup",
+        "listen": "[::]:20001",
+        "upstream": "lookup:8080",
+        "enabled": true,
+        "Logger": {},
+        "toxics": []
+      }
+    },
+    "api_isolation": {
+      "probed": [
+        "toxiproxy",
+        "toxiproxy-ctl",
+        "192.168.117.2",
+        "192.168.147.2",
+        "192.168.148.4"
+      ],
+      "port": 8474,
+      "control_ok": {
+        "app": true,
+        "k6": true
+      },
+      "reachable": [
+        "app->192.168.147.2",
+        "k6->192.168.147.2"
+      ]
+    }
+  },
+  "app": {
+    "image_id": "sha256:ac67c58af53caa82cc437d3a6632e49f7732d075317f245690ac0a445c3c9c65",
+    "resolved": {
+      "chaos.impl": "timeout",
+      "chaos.lookup.response-timeout-ms": "300",
+      "chaos.lookup.deadline-ms": "300",
+      "chaos.lookup.connect-timeout-ms": "1000",
+      "chaos.lookup.pool-max": "50",
+      "chaos.lookup.acquire-timeout-ms": "2000",
+      "server.tomcat.threads.max": "50",
+      "server.tomcat.accept-count": "100",
+      "server.tomcat.max-connections": "200",
+      "spring.datasource.hikari.maximum-pool-size": "10",
+      "spring.datasource.hikari.connection-timeout": "5000",
+      "spring.threads.virtual.enabled": "false",
+      "management.server.port": "8081",
+      "chaos.management.threads": "4",
+      "management.tracing.sampling.probability": "1.0",
+      "management.otlp.metrics.export.enabled": "false",
+      "java.version": "21.0.13",
+      "tomcat.version": "11.0.27.0",
+      "actual.business.max-threads": 50,
+      "actual.business.accept-count": 100,
+      "actual.business.max-connections": 200
+    }
+  },
+  "clock_end": {
+    "offset_ms": 16.5,
+    "rtt_ms": 40.8
+  },
+  "log_truncation": {},
+  "cohorts": {
+    "warmup": 1500,
+    "measured": 6001,
+    "probe": 6
+  },
+  "latency": {
+    "issued": 6001,
+    "status_201": 3891,
+    "in_budget_201": 3880,
+    "k6_timeouts": 0,
+    "client_errors": 0,
+    "cut_off": 0,
+    "p99_201_ms": 290.0,
+    "p50_201_ms": 5.0
+  }
+}

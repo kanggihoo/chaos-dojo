@@ -1,0 +1,179 @@
+name: chaos-7fa135-r2
+services:
+  db:
+    image: postgres:17@sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: db
+      chaos-lab.repeat: '2'
+    networks:
+    - deps
+    cpus: '0.5'
+    mem_limit: 512m
+    ports:
+    - 127.0.0.1::5432
+    logging:
+      driver: json-file
+    environment:
+      POSTGRES_USER: ${CHAOS_DB_USER}
+      POSTGRES_PASSWORD: ${CHAOS_DB_PASSWORD}
+      POSTGRES_DB: db
+    volumes:
+    - ./inputs/problems/external-api/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    - chaos-7fa135-r2-db-v0:/var/lib/postgresql/data
+    command:
+    - postgres
+    - -c
+    - default_transaction_isolation=read committed
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -U "$${POSTGRES_USER}" -d db
+      interval: 1s
+      timeout: 2s
+      retries: 120
+  lookup:
+    image: wiremock/wiremock:3.13.1@sha256:d61e7720f89483fdef5366843b58d1dfd06bcce5828179c9f2f54de5c28354b0
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: lookup
+      chaos-lab.repeat: '2'
+    networks:
+    - deps
+    cpus: '0.25'
+    mem_limit: 384m
+    ports:
+    - 127.0.0.1::8080
+    logging:
+      driver: json-file
+    command:
+    - --port
+    - '8080'
+    - --admin-api-basic-auth
+    - ${CHAOS_WM_AUTH}
+    - --disable-extensions-scanning
+    - --disable-banner
+    - --max-request-journal-entries
+    - '50000'
+    volumes:
+    - ./inputs/problems/external-api/stubs:/home/wiremock/mappings:ro
+    healthcheck:
+      disable: true
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0@sha256:9378ed52a28bc50edc1350f936f518f31fa95f0d15917d6eb40b8e376d1a214e
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: toxiproxy
+      chaos-lab.repeat: '2'
+    command:
+    - -host=toxiproxy-ctl
+    - -port=8474
+    networks:
+      ctl:
+        aliases:
+        - toxiproxy-ctl
+        gw_priority: 100
+      deps: {}
+      app: {}
+    ports:
+    - 127.0.0.1::8474
+    cpus: '0.25'
+    mem_limit: 128m
+    logging:
+      driver: json-file
+  app:
+    image: sha256:ac67c58af53caa82cc437d3a6632e49f7732d075317f245690ac0a445c3c9c65
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: app
+      chaos-lab.repeat: '2'
+    environment:
+      IMPL: timeout
+      DB_URL: jdbc:postgresql://toxiproxy:20000/db
+      DB_USER: ${CHAOS_DB_USER}
+      DB_PASSWORD: ${CHAOS_DB_PASSWORD}
+      JDBC_POOL_SIZE: '10'
+      JDBC_CONNECTION_TIMEOUT_MS: '5000'
+      LOOKUP_BASE_URL: http://toxiproxy:20001
+      LOOKUP_RESPONSE_TIMEOUT_MS: '300'
+      LOOKUP_DEADLINE_MS: '300'
+      LOOKUP_CONNECT_TIMEOUT_MS: '1000'
+      HTTP_POOL_MAX: '50'
+      HTTP_POOL_ACQUIRE_TIMEOUT_MS: '2000'
+      TOMCAT_MAX_THREADS: '50'
+      TOMCAT_ACCEPT_COUNT: '100'
+      TOMCAT_MAX_CONNECTIONS: '200'
+      MANAGEMENT_PORT: '8081'
+      MANAGEMENT_THREADS: '4'
+      OTLP_ENDPOINT: http://alloy:4318
+      TRACE_SAMPLING: '1.0'
+      SERVICE_NAME: orders-timeout
+      CHAOS_RUN_ID: 20261101-213114-external-api-api-down-timeout-191af9
+      CHAOS_REPEAT: '2'
+    networks:
+    - app
+    - run
+    ports:
+    - 127.0.0.1::8081
+    expose:
+    - '8080'
+    cpus: '1'
+    mem_limit: 512m
+    depends_on:
+      db:
+        condition: service_healthy
+      lookup:
+        condition: service_started
+    logging:
+      driver: json-file
+  k6:
+    image: grafana/k6:1.3.0@sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: k6
+      chaos-lab.repeat: '2'
+    networks:
+    - app
+    - run
+    cpus: '2'
+    mem_limit: 1024m
+    volumes:
+    - ./inputs/harness/k6/wrapper.js:/chaos/wrapper.js:ro
+    - ./inputs/problems/external-api/k6/orders.js:/problem/script.js:ro
+    - ./repeats/2/k6:/out
+    environment:
+      K6_PROMETHEUS_RW_SERVER_URL: http://alloy:9999/api/v1/metrics/write
+      K6_PROMETHEUS_RW_PUSH_INTERVAL: 5s
+      K6_PROMETHEUS_RW_TREND_STATS: p(50),p(95),p(99),max
+      K6_NO_USAGE_REPORT: 'true'
+      K6_AUTO_EXTENSION_RESOLUTION: 'false'
+    profiles:
+    - load
+    logging:
+      driver: json-file
+networks:
+  app:
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: network
+      chaos-lab.repeat: '2'
+  deps:
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: network
+      chaos-lab.repeat: '2'
+  ctl:
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: network
+      chaos-lab.repeat: '2'
+  run:
+    external: true
+    name: chaos-7fa135-run
+volumes:
+  chaos-7fa135-r2-db-v0:
+    name: chaos-7fa135-r2-db-v0
+    labels:
+      chaos-lab.run-id: 20261101-213114-external-api-api-down-timeout-191af9
+      chaos-lab.role: db
+      chaos-lab.repeat: '2'

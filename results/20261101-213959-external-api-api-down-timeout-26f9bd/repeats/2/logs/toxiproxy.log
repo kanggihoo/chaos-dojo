@@ -1,0 +1,2 @@
+{"level":"info","version":"2.12.0","caller":"server.go:78","time":"2026-11-01T21:46:06Z","message":"Starting Toxiproxy"}
+{"level":"info","address":"127.0.0.1:8474","caller":"api.go:57","time":"2026-11-01T21:46:06Z","message":"Starting Toxiproxy HTTP server"}

@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "run_id": "20261101-214655-external-api-api-down-timeout-546e1c",
+  "problem": "external-api",
+  "scenario": "api-down",
+  "impl": "timeout",
+  "impl_description": "lookup 전체 호출을 300 ms 기한으로 끊는다",
+  "impl_extra_dependencies": [],
+  "exit_code": 3,
+  "error": "interrupted",
+  "repeats": [
+    {
+      "n": 1,
+      "completion": "complete",
+      "validity": "valid",
+      "correctness": "pass",
+      "slo": "missed",
+      "exclusion": []
+    },
+    {
+      "n": 2,
+      "completion": "incomplete",
+      "validity": "unknown",
+      "correctness": "unknown",
+      "slo": "unknown",
+      "exclusion": [
+        "run stopped: KeyboardInterrupt"
+      ]
+    },
+    {
+      "n": 3,
+      "completion": "not-run",
+      "validity": "unknown",
+      "correctness": null,
+      "slo": null,
+      "exclusion": [
+        "not run: interrupted"
+      ]
+    },
+    {
+      "n": 4,
+      "completion": "not-run",
+      "validity": "unknown",
+      "correctness": null,
+      "slo": null,
+      "exclusion": [
+        "not run: interrupted"
+      ]
+    },
+    {
+      "n": 5,
+      "completion": "not-run",
+      "validity": "unknown",
+      "correctness": null,
+      "slo": null,
+      "exclusion": [
+        "not run: interrupted"
+      ]
+    }
+  ],
+  "aggregate": {
+    "planned": 5,
+    "executed": 2,
+    "complete": 1,
+    "valid": 1,
+    "not_full_five": true,
+    "excluded": [
+      {
+        "n": 2,
+        "reasons": [
+          "run stopped: KeyboardInterrupt"
+        ]
+      },
+      {
+        "n": 3,
+        "reasons": [
+          "not run: interrupted"
+        ]
+      },
+      {
+        "n": 4,
+        "reasons": [
+          "not run: interrupted"
+        ]
+      },
+      {
+        "n": 5,
+        "reasons": [
+          "not run: interrupted"
+        ]
+      }
+    ],
+    "metrics": {
+      "in_budget_ratio": {
+        "label": "median of per-repeat in-budget 201 ratio",
+        "median": 0.6630561573071155,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      },
+      "p99_201_ms": {
+        "label": "median of per-repeat 201 p99 (ms)",
+        "median": 212.0,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      },
+      "p50_201_ms": {
+        "label": "median of per-repeat 201 p50 (ms)",
+        "median": 5.0,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      },
+      "time_to_recovery_ms": {
+        "label": "median of per-repeat time-to-recovery (ms)",
+        "median": 713.609130859375,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      },
+      "ambiguous": {
+        "label": "median of per-repeat ambiguous orders",
+        "median": 0,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      },
+      "violations": {
+        "label": "median of per-repeat confirmed violations",
+        "median": 0,
+        "cv": null,
+        "n": 1,
+        "investigate": false
+      }
+    }
+  },
+  "identity": {
+    "engine": {
+      "product": "OrbStack",
+      "server_version": "29.4.0",
+      "os_type": "linux",
+      "architecture": "aarch64",
+      "cpus": 10,
+      "memory_bytes": 8393289728
+    },
+    "comparison": {
+      "scenario_sha256": "e1e5ec6c33c1635e13771125aa933a6943e6f005e1da91f24b4cddc2ae7f141c",
+      "problem_sha256": "8aa9a22b69ada6a698638ef1170f5852150eefe0ffca42a85e81c4f375e02316",
+      "workload": {
+        "script": "../../k6/orders.js",
+        "rate": 50,
+        "warmup_s": 30,
+        "measured_s": 120,
+        "graceful_stop_s": 20,
+        "timeout_s": 15,
+        "seed": 42
+      },
+      "seed": 42,
+      "contract": {
+        "version": 1,
+        "sha256": "a6716e9a9b5e2fdfb4df67dba56bd2329b2c4245cc3f5096a0fc882eb112d278"
+      }
+    },
+    "harness": {
+      "commit": "83f52a194219c9ab4798044d342e3da4b68531bd",
+      "dirty": true,
+      "changed": [
+        ".env"
+      ]
+    },
+    "conditions": {
+      "seed": 42,
+      "budgets": {
+        "app": {
+          "cpus": 1,
+          "memory_mib": 512
+        },
+        "k6": {
+          "cpus": 2,
+          "memory_mib": 1024
+        },
+        "alloy": {
+          "cpus": 0.5,
+          "memory_mib": 512
+        },
+        "lgtm": {
+          "cpus": 1.5,
+          "memory_mib": 2048
+        },
+        "toxiproxy": {
+          "cpus": 0.25,
+          "memory_mib": 128
+        },
+        "db": {
+          "cpus": 0.5,
+          "memory_mib": 512
+        },
+        "lookup": {
+          "cpus": 0.25,
+          "memory_mib": 384
+        }
+      },
+      "engine_host": "DOCKER_HOST",
+      "subprocess_env_names": [
+        "CHAOS_DB_PASSWORD",
+        "CHAOS_DB_USER",
+        "CHAOS_GF_PASSWORD",
+        "CHAOS_WM_AUTH",
+        "DOCKER_HOST",
+        "HOME",
+        "PATH"
+      ],
+      "tools": {
+        "chaos_cli": "0.1.0",
+        "python": "3.12.11",
+        "uv": "uv 0.11.17 (Homebrew 2026-05-28 aarch64-apple-darwin)",
+        "docker": "29.4.0",
+        "compose": "5.1.2",
+        "images": {
+          "k6": "grafana/k6:1.3.0@sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d",
+          "toxiproxy": "ghcr.io/shopify/toxiproxy:2.12.0@sha256:9378ed52a28bc50edc1350f936f518f31fa95f0d15917d6eb40b8e376d1a214e",
+          "alloy": "grafana/alloy:v1.11.0@sha256:e849f170152aff2015427908463a08c48416abade66302cd880379609058042b",
+          "lgtm": "grafana/otel-lgtm:0.11.10@sha256:09d8c3ce4f3a5f2f5b1ef7a3cc526a7e03b608aeef3ea1c67c912df43b2690c9"
+        }
+      },
+      "other_containers": {
+        "count": 0,
+        "images": []
+      }
+    },
+    "images": {
+      "db": {
+        "ref": "postgres:17@sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f",
+        "index_digest": "sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": null,
+        "image_id": "sha256:31ba9c94a03ada9988f2bb493a22a75eef3a185884533e5cdbcd498ea835b08f"
+      },
+      "lookup": {
+        "ref": "wiremock/wiremock:3.13.1@sha256:d61e7720f89483fdef5366843b58d1dfd06bcce5828179c9f2f54de5c28354b0",
+        "index_digest": "sha256:d61e7720f89483fdef5366843b58d1dfd06bcce5828179c9f2f54de5c28354b0",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": "sha256:448f771fda8085b383fb6804de5fbe3d53c4fb302f85a9621b43985399c976c7",
+        "image_id": "sha256:d61e7720f89483fdef5366843b58d1dfd06bcce5828179c9f2f54de5c28354b0"
+      },
+      "k6": {
+        "ref": "grafana/k6:1.3.0@sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d",
+        "index_digest": "sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": "sha256:1a247de7677b9d74fa80c76e35396439da550cb09fdf6612f40b70d48fde3e54",
+        "image_id": "sha256:3ddc8b1a33a2c3d8edc6e99b6a762ae36cba08788463458f5e6a7703e14eb77d"
+      },
+      "toxiproxy": {
+        "ref": "ghcr.io/shopify/toxiproxy:2.12.0@sha256:9378ed52a28bc50edc1350f936f518f31fa95f0d15917d6eb40b8e376d1a214e",
+        "index_digest": "sha256:9378ed52a28bc50edc1350f936f518f31fa95f0d15917d6eb40b8e376d1a214e",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": "sha256:5ab4b4e8f476fd5452eb9584a608dd7cf8c11135878a8f7953722a9fcb9b3d87",
+        "image_id": "sha256:9378ed52a28bc50edc1350f936f518f31fa95f0d15917d6eb40b8e376d1a214e"
+      },
+      "alloy": {
+        "ref": "grafana/alloy:v1.11.0@sha256:e849f170152aff2015427908463a08c48416abade66302cd880379609058042b",
+        "index_digest": "sha256:e849f170152aff2015427908463a08c48416abade66302cd880379609058042b",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": "sha256:87a8fcab1a8bb39047ee25ccd749b5b89de1eeb41f8f85dac7b906894d1a11b8",
+        "image_id": "sha256:e849f170152aff2015427908463a08c48416abade66302cd880379609058042b"
+      },
+      "lgtm": {
+        "ref": "grafana/otel-lgtm:0.11.10@sha256:09d8c3ce4f3a5f2f5b1ef7a3cc526a7e03b608aeef3ea1c67c912df43b2690c9",
+        "index_digest": "sha256:09d8c3ce4f3a5f2f5b1ef7a3cc526a7e03b608aeef3ea1c67c912df43b2690c9",
+        "platform": "linux/arm64",
+        "platform_manifest_digest": "sha256:2a35ade8d9d589c3911b5ba005624ea2813af5fa754f051cddc88676c782d2d3",
+        "image_id": "sha256:09d8c3ce4f3a5f2f5b1ef7a3cc526a7e03b608aeef3ea1c67c912df43b2690c9"
+      },
+      "app": {
+        "image_id": "sha256:ac67c58af53caa82cc437d3a6632e49f7732d075317f245690ac0a445c3c9c65",
+        "platform": "linux/arm64",
+        "commit": "83f52a194219c9ab4798044d342e3da4b68531bd",
+        "build_flags": [
+          "--provenance=false",
+          "--sbom=false",
+          "--build-arg",
+          "SOURCE_DATE_EPOCH=0"
+        ],
+        "dirty": false,
+        "build_input_sha256": "dc0cdcec88847b87dd03571b77fcf89c984538c8527daa64472f09160b9d1b8a",
+        "dirty_patch": null
+      }
+    }
+  },
+  "live_status": "ok",
+  "live_reasons": [],
+  "cleanup": {
+    "ok": true,
+    "left": []
+  },
+  "warmup_policy": "fixed",
+  "predict": null,
+  "observability_note": "The observability stack stays up for the whole run; its backend state carries over between repeats."
+}

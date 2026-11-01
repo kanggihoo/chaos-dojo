@@ -1,0 +1,24 @@
+ Container chaos-7fa135-r1-k6-run-4b8c0e1fac48 Creating 
+ Container chaos-7fa135-r1-k6-run-4b8c0e1fac48 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=2.58ms med=4.83ms p(99)=297.61ms max=342.13ms
+      { expected_response:true }...: min=2.58ms med=4.82ms p(99)=152.36ms max=297.55ms
+    http_req_failed................: 1.00%  15 out of 1500
+    http_reqs......................: 1500   49.780144/s
+
+    EXECUTION
+    iteration_duration.............: min=2.94ms med=5.35ms p(99)=298.21ms max=343.06ms
+    iterations.....................: 1500   49.780144/s
+    vus............................: 5      min=0          max=5  
+    vus_max........................: 900    min=900        max=900
+
+    NETWORK
+    data_received..................: 410 kB 14 kB/s
+    data_sent......................: 350 kB 12 kB/s
+
+
+

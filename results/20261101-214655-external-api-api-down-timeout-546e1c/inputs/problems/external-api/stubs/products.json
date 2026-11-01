@@ -1,0 +1,364 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-001"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-001",
+          "price": 1500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-002"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-002",
+          "price": 2500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-003"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-003",
+          "price": 3500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-004"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-004",
+          "price": 4500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-005"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-005",
+          "price": 5500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-006"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-006",
+          "price": 6500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-007"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-007",
+          "price": 7500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-008"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-008",
+          "price": 8500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-009"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-009",
+          "price": 9500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-010"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-010",
+          "price": 10500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-011"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-011",
+          "price": 11500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-012"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-012",
+          "price": 12500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-013"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-013",
+          "price": 13500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-014"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-014",
+          "price": 14500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-015"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-015",
+          "price": 15500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-016"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-016",
+          "price": 16500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-017"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-017",
+          "price": 17500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-018"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-018",
+          "price": 18500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-019"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-019",
+          "price": 19500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/products/p-020"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "productId": "p-020",
+          "price": 20500,
+          "currency": "KRW",
+          "available": true
+        }
+      }
+    }
+  ]
+}

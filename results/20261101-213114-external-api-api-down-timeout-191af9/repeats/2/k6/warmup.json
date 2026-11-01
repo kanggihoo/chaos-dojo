@@ -1,0 +1,30 @@
+{
+  "baseUrl": "http://app:8080",
+  "seed": 42,
+  "timeoutS": 15,
+  "options": {
+    "scenarios": {
+      "warmup": {
+        "executor": "constant-arrival-rate",
+        "exec": "warmup",
+        "rate": 50,
+        "timeUnit": "1s",
+        "duration": "30s",
+        "preAllocatedVUs": 900,
+        "maxVUs": 900,
+        "gracefulStop": "20s"
+      }
+    },
+    "tags": {
+      "run_id": "20261101-213114-external-api-api-down-timeout-191af9",
+      "repeat": "2"
+    },
+    "noVUConnectionReuse": true,
+    "summaryTrendStats": [
+      "min",
+      "med",
+      "p(99)",
+      "max"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+ Container chaos-7fa135-r1-k6-run-02ed32bb22b7 Creating 
+ Container chaos-7fa135-r1-k6-run-02ed32bb22b7 Created 
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: min=466.24µs med=3.9ms  p(99)=358.67ms max=915.18ms
+      { expected_response:true }...: min=2.1ms    med=4.52ms p(99)=271.44ms max=778.86ms
+    http_req_failed................: 35.12% 2110 out of 6007
+    http_reqs......................: 6007   50.04641/s
+
+    EXECUTION
+    iteration_duration.............: min=719.74µs med=4.75ms p(99)=369.64ms max=6s      
+    iterations.....................: 6002   50.004754/s
+    vus............................: 0      min=0            max=33 
+    vus_max........................: 901    min=901          max=901
+
+    NETWORK
+    data_received..................: 2.1 MB 17 kB/s
+    data_sent......................: 1.4 MB 12 kB/s
+
+
+
