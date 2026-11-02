@@ -1,3 +1,9 @@
 # timeout
 
-Shared app image (`../../app`) with `IMPL=timeout`: the whole lookup call (pool acquire + connect + response) is cut at `LOOKUP_DEADLINE_MS` (300 ms). Written for chaos-lab; no external source.
+## 구현 방식
+
+공통 앱(`../../app`)을 빌드한 이미지를 사용하고, 환경 변수 `IMPL=timeout`으로 실행한다. 외부 상품 API(lookup) 호출 전체에 `LOOKUP_DEADLINE_MS`로 300ms 기한을 두며, 커넥션 풀 대기부터 연결과 응답 수신까지 이 기한에 포함한다.
+
+## 출처와 수정 이력
+
+chaos-lab을 위해 직접 작성한 구현이다. 외부에서 가져온 원본 코드는 없으며, 외부 원본에 대한 수정 이력도 없다.
