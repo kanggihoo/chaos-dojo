@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "diagram_type": "waterfall",
+  "meta": {
+    "title": "repeat 1의 7단계와 장애 구간",
+    "subtitle": "api-slow × naive, repeat 1 실측. 0 s = prepare 시작(2026-10-31T00:44:41.682Z). convergence는 N/A(0 s)라 생략.",
+    "locale": "ko",
+    "evidence": "measured",
+    "unit": "s",
+    "quality_profile": "showcase"
+  },
+  "spans": [
+    { "id": "repeat", "name": "repeat 1", "service": "chaos CLI", "start": 0, "end": 181.51, "detail": "Repeat.run이 단계를 순서대로 호출한다. 앱·DB·WireMock·Toxiproxy는 이 repeat 안에서 새로 만들고 cleanup에서 지운다." },
+    { "id": "prepare", "name": "prepare", "service": "chaos CLI", "start": 0, "end": 20.88, "parent": "repeat", "detail": "의존성 → Toxiproxy 프록시 생성 → 앱 기동 → readiness와 첫 스크레이프 확인. 한도 300 s." },
+    { "id": "warmup", "name": "warmup", "service": "k6", "start": 20.88, "end": 53.242, "parent": "repeat", "detail": "warmup cohort 1,500건(50 rps × 30 s). 끝나면 진행 중 요청 0을 확인하고 orders 테이블과 WireMock journal을 비운 뒤 경계를 기록한다." },
+    { "id": "measured", "name": "measured", "service": "chaos CLI", "start": 53.242, "end": 173.771, "parent": "repeat", "detail": "한도 160 s. 아래 세 막대가 이 단계 안에서 동시에 진행된다." },
+    { "id": "load", "name": "measured 부하 (t0 → 끝)", "service": "k6", "start": 53.741, "end": 173.765, "parent": "measured", "detail": "constant-arrival-rate 50 rps × 120 s = measured cohort 6,000건. t0는 k6가 보고한 첫 요청 시각." },
+    { "id": "fault", "name": "장애: lookup +2,000 ms 지연", "service": "Toxiproxy", "start": 93.751, "end": 133.752, "parent": "measured", "status": "error", "detail": "계획 t0+40 s / t0+80 s. 실제 적용 확인은 t0+40.010 s, 해제 확인은 t0+80.011 s." },
+    { "id": "probe", "name": "probe: 복구 확인 0.991 s", "service": "k6", "start": 133.752, "duration": 0.991, "parent": "measured", "detail": "장애 해제 시점부터 1 s 간격 probe(이 repeat 6건). 예산 안 201이 5회 연속되기 시작한 시점까지가 time-to-recovery 991 ms." },
+    { "id": "recovery", "name": "recovery", "service": "chaos CLI", "start": 173.771, "end": 174.173, "parent": "repeat", "detail": "probe를 포함한 k6 프로세스가 끝나기를 기다린다. probe 자체는 measured 안에서 이미 돌았다." },
+    { "id": "collect", "name": "collect", "service": "chaos CLI", "start": 174.174, "end": 180.153, "parent": "repeat", "detail": "DB 스냅샷(REPEATABLE READ), 필수 지표 도착 확인, 로그·trace·WireMock journal 저장." },
+    { "id": "cleanup", "name": "cleanup", "service": "chaos CLI", "start": 180.154, "end": 181.51, "parent": "repeat", "detail": "이 repeat의 Compose 프로젝트(컨테이너·네트워크·볼륨)를 지운다." }
+  ]
+}

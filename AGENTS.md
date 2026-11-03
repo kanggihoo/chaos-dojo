@@ -6,6 +6,7 @@
 
 - 지금 어디까지 왔고 다음에 무엇을 하는가: [docs/STATUS.md](docs/STATUS.md)
 - 하네스 동작을 바꾸거나 판단이 필요할 때 (계약): [docs/specs/experiment-harness/spec.md](docs/specs/experiment-harness/spec.md), 이유는 같은 폴더의 `decisions.md`
+- 시스템 전체 그림(사람용 설명 페이지): [docs/explainer/chaos-lab.html](docs/explainer/chaos-lab.html). 원본은 같은 폴더의 `chaos-lab.archify.md`와 `repeat-phases.waterfall.json`이고 HTML은 빌드 결과물이다. 고칠 때는 원본을 고친 뒤 archify 스킬의 `finalize explainer docs/explainer/chaos-lab.archify.md docs/explainer/chaos-lab.html --repo-root .`로 같은 경로에 다시 만든다. 새 폴더를 만들지 않는다.
 - 용어: [GLOSSARY.md](GLOSSARY.md). 이름은 chaos-lab, 명령은 `chaos`, 단위는 problem · scenario · impl · run · repeat 를 그대로 쓴다.
 
 ## 명령

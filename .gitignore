@@ -8,3 +8,7 @@ problems/*/app/.gradle/
 .claude/
 .agents/
 skills-lock.json
+.archify/
+docs/explainer/*.delivery.json
+docs/explainer/*.finalize.json
+docs/explainer/*.finalize-summary.json
