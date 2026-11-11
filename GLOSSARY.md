@@ -10,7 +10,7 @@ _사용하지 않는 표현_: kata, drill, case
 
 **Scenario**:
 하나의 problem에서 부하, 장애, 확인 항목을 구체적으로 정해 실행할 수 있게 만든 실험 조건. baseline, api-slow, api-down이 이에 해당한다.
-_사용하지 않는 표현_: test case, kata variant
+_사용하지 않는 표현_: test case, kata variant, stage (브리핑을 게임 stage처럼 쓰더라도 단위 이름은 scenario다.)
 
 **Impl**:
 하나의 problem을 해결하는 구현으로, 해당 problem에 속한 모든 scenario에서 실행할 수 있다. naive, timeout이 이에 해당한다.
@@ -42,7 +42,7 @@ repeat가 problem에 정의된 불변 조건, 즉 어떤 상황에서도 지켜�
 _사용하지 않는 표현_: validity
 
 **SLO**:
-repeat가 problem에 정의된 서비스 수준 목표를 충족했는지에 대한 판정. 정해진 응답 시간 한도 안에 성공한 요청의 비율과 성공 요청의 지연 시간을 기준으로 한다.
+repeat가 problem에 정의된 서비스 수준 목표를 충족했는지에 대한 판정. 정해진 응답 시간 한도 안에 성공한 요청의 비율과 성공 요청의 지연 시간을 기준으로 하며, 결과는 met(충족), missed(미달), unknown(판정 불가) 중 하나다.
 _사용하지 않는 표현_: performance pass
 
 **Ambiguous outcome**:
