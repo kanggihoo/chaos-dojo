@@ -1,4 +1,4 @@
-# 실험 하네스 (experiment-harness)
+# 하네스 (experiment-harness)
 
 Status: approved
 Decisions: [decisions.md](decisions.md) · Glossary and ADRs: [GLOSSARY.md](../../../GLOSSARY.md) · [0001](../../adr/0001-problems-as-data-generated-compose.md)
