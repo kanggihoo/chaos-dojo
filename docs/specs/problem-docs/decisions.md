@@ -9,9 +9,9 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: none
 
 ## D-2 템플릿과 기존 문서
 - Status: settled
-- Decision: `docs/templates/`에 네 종류의 템플릿을 둔다. 이번 feature에서 기존 문서 7개를 템플릿에 맞춰 다시 쓰고 `problems/external-api/README.md`를 새로 만든다. AGENTS.md에 "problem 데이터 문서는 이 템플릿을 따른다"는 규칙을 넣는다.
-- Rejected: `problems/_template/` → `chaos/validate.py`가 `problems/` 아래를 순회하므로 problem으로 오인될 수 있다 · 템플릿만 만들고 기존 문서는 나중에 → 다음 작성자는 템플릿보다 옆의 기존 문서를 따라 쓴다
-- Reuse: none (modify) — `problems/external-api/`의 scenario README 3개(baseline, api-slow, api-down), impl README 2개(naive, timeout), PROVENANCE 2개를 템플릿 형식으로 다시 쓰고, 각 `impl.yaml`의 `provenance: PROVENANCE.md` 참조가 가리키는 파일은 유지한다 · `AGENTS.md#작업 규칙` (modify) — 템플릿을 따르라는 규칙 한 줄만 추가한다
+- Decision: `docs/templates/`에 네 종류의 템플릿을 둔다. 이번 feature에서 기존 문서 7개를 템플릿에 맞춰 다시 쓰고 `problems/external-api/README.md`를 새로 만든다. AGENTS.md에 "problem 데이터 문서는 이 템플릿을 따른다"는 규칙을 넣는다. AGENTS.md에서 트레일러 경로를 experiment-harness로 고정하고 AC 체크 근거를 테스트와 run으로 한정한 줄은 지우고, "spec이 계약이다" 줄의 check 명령도 작업 중인 feature를 가리키게 한다. 두 규칙은 wf 스킬이 feature마다 정하므로 이 줄은 중복이고, 다른 feature에서는 틀린 규칙이 된다. AGENTS.md 변경을 구현의 첫 commit으로 한다.
+- Rejected: `problems/_template/` → `problems/`는 하네스가 읽는 데이터 폴더라서 데이터가 아닌 파일이 problem처럼 섞인다 · 템플릿만 만들고 기존 문서는 나중에 → 다음 작성자는 템플릿보다 옆의 기존 문서를 따라 쓴다
+- Reuse: none (modify) — `problems/external-api/`의 scenario README 3개(baseline, api-slow, api-down), impl README 2개(naive, timeout), PROVENANCE 2개를 템플릿 형식으로 다시 쓰고, 각 `impl.yaml`의 `provenance: PROVENANCE.md` 참조가 가리키는 파일은 유지한다 · `AGENTS.md#작업 규칙` (modify) — 템플릿을 따르라는 규칙 한 줄을 추가하고, 트레일러·AC 체크 규칙 줄을 지우고, check 명령의 feature 고정을 푼다. 그 밖은 건드리지 않는다
 
 ## D-3 형식을 지키게 하는 수단
 - Status: provisional
@@ -31,7 +31,7 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: none
 
 ## D-6 클리어 조건과 보조 목표
 - Status: settled
-- Decision: 클리어 조건은 하네스 판정과 똑같이 적고, 지금 impl로 클리어할 수 없으면 그 사실도 적는다. 보조 목표는 하네스가 판정하지 않는다고 표시하고, 장애 전·중·후 구간 수치로 사람이 판단한다.
+- Decision: 클리어 조건은 하네스 판정과 똑같이 적고, 지금 impl로 클리어할 수 없으면 그 사실도 적는다. 클리어 조건은 하네스가 판정하는 단위인 repeat 하나를 기준으로 적는다. 보조 목표는 하네스가 판정하지 않는다고 표시하고, 장애 전·중·후 구간 수치로 사람이 판단한다. 장애가 없는 baseline은 구간이 없으므로 measured 전체 수치로 판단한다.
 - Rejected: 클리어 조건만 적기 → SLO는 measured 요청 전체로 판정하므로(experiment-harness AC-23) 장애가 40초인 scenario에서 lookup이 필요한 impl은 모두 미달이 되어 impl 사이 차이가 보이지 않는다 · scenario별 목표만 적기 → README가 하네스가 하지 않는 판정을 하는 것처럼 보인다
 
 ## D-7 impl README
@@ -41,10 +41,10 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: none
 
 ## D-8 꼬리 질문과 결론
 - Status: settled
-- Decision: 각 scenario·impl README 끝에 꼬리 질문을 둔다. 질문마다 `답함`(답한 run id) 또는 `열림`(답할 후보 impl·scenario)을 붙인다. 질문 본문은 그 README에만 두고 problem README는 링크로 잇는다. 기록된 run으로 확인한 결론은 run id와 날짜를 붙여 적는다.
-- Rejected: 실험 전 질문만 적기 → 배운 것이 쌓이는 곳은 결론이다 · 결론을 STATUS.md나 리포트에만 두기 → 질문과 답이 떨어져 꼬리가 끊긴다 · 별도 backlog 파일 → `열림` 질문이 그대로 다음 impl·scenario 후보 목록이다
+- Decision: 각 scenario·impl README 끝에 꼬리 질문을 둔다. 질문마다 `답함`(답한 run id) 또는 `열림`(답할 후보 impl·scenario)을 붙인다. 질문 본문은 그 README에만 두고 problem README는 링크로 잇는다. 기록된 run으로 확인한 결론은 run id와 날짜를 붙여 적는다. 결론의 근거는 repeat 다섯 개가 모두 complete이고 valid인 run만 인정하고, 결론의 수치는 그 run의 run 수준 값(repeat별 값의 중앙값)을 쓴다. 중단된 run의 수치는 참고로도 적지 않는다.
+- Rejected: 중단된 run의 일부 repeat를 회차를 밝혀 근거로 쓰기 → repeat 한두 번으로는 하네스가 run 결과로 치지 않는 수치를 결론처럼 적게 된다 · 실험 전 질문만 적기 → 배운 것이 쌓이는 곳은 결론이다 · 결론을 STATUS.md나 리포트에만 두기 → 질문과 답이 떨어져 꼬리가 끊긴다 · 별도 backlog 파일 → `열림` 질문이 그대로 다음 impl·scenario 후보 목록이다
 
 ## D-9 숫자와 기록 결과
 - Status: settled
-- Decision: 상황 설명과 클리어 조건에 필요한 숫자는 문장으로 쓴다. 나머지 설정은 같은 폴더의 YAML을 가리킨다. 기록 결과는 결론 문장 안의 근거 숫자 정도만 쓰고 결과 표는 옮기지 않는다. 수치를 고른 이유는 필수가 아니며, 결과 해석을 바꾸는 수치일 때만 한 줄 적는다.
+- Decision: 상황 설명(장애, 부하), 클리어 조건, impl이 장애 중 어떻게 동작하는지 설명하는 데 필요한 숫자는 문장으로 쓴다. 나머지 설정은 같은 폴더의 YAML을 가리킨다. 상태 코드나 run id 같은 식별자는 숫자 규칙의 대상이 아니다. 기록 결과는 결론 문장 안의 근거 숫자 정도만 쓰고 결과 표는 옮기지 않는다. 수치를 고른 이유는 필수가 아니며, 결과 해석을 바꾸는 수치일 때만 한 줄 적는다.
 - Rejected: 설정 값과 결과를 표로 모두 옮기기 → YAML이나 `results/`가 바뀌면 README가 틀린다 · 숫자를 전혀 쓰지 않기 → "느려진다"만으로는 상황이 전달되지 않는다 · 모든 수치의 선정 근거 요구 → 지금 수치에는 기록된 근거가 없고, 읽는 사람에게 중요한 것은 해결 방식의 선택 이유다
