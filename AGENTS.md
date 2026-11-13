@@ -33,6 +33,19 @@ uv run chaos run external-api/<scenario> --impl <impl>   # 실제 실행: run �
 - 결과 파일에는 홈 경로, 호스트 이름, 생성된 자격 증명이 들어가지 않는다. 자격 증명은 Compose에 `${CHAOS_…}` 변수 참조로만 넣는다.
 - `.claude/`, `.agents/`는 사용자의 로컬 에이전트 설정이다. 건드리지 않는다.
 
+## impl 코드
+
+impl 코드는 장애에 어떻게 대응하는지를 한눈에 보이게 쓴다. 계층 구조와 일반적인 유지 보수성보다 이것이 먼저다.
+
+- 계층을 나누지 않는다(DTO, Repository, Service 없음). 주문 흐름(요청 검증, lookup, 저장)은 Controller 한 파일에 둔다.
+- 대응 방법(deadline, retry, circuit breaker 등)은 부품마다 파일 하나다. 부품은 모두 같은 `Lookup` 인터페이스를 구현하고 안쪽 `Lookup`을 감싼다(decorator).
+- impl은 `Impls.java` 한 곳의 switch에서 부품을 감싸 조합한다. case 이름이 `impl.yaml`의 `id`이고, 감싸는 순서가 곧 대응 순서다. `IMPL` 값을 보는 곳은 여기뿐이고, 공통 코드에는 impl 분기를 두지 않는다.
+- 기한, 재시도 횟수 같은 숫자는 코드에 박지 않고 `impl.yaml`의 환경 변수로 받는다.
+- 실패 종류는 `Problem` enum 하나에 모은다. 값은 `openapi.yaml`이 정한 problem type과 같고, 코드는 상태 코드와 문자열 대신 enum 이름을 쓴다.
+- 코드에는 동작만 둔다. 왜 이 방식을 골랐는지는 impl README에 쓴다.
+- package는 한 단계다: 업무 코드는 `orders`, 관리 포트 설정은 component scan 밖에 있어야 하므로 `management`.
+- 대응 방법은 라이브러리(Resilience4j 등) 없이 직접 짠다. 라이브러리 설정 몇 줄로는 대응 로직이 코드에 드러나지 않는다.
+
 ## 엔진 함정 (실제 실행에서 겪은 것)
 
 - OrbStack은 Docker 네트워크끼리 라우팅을 막지 않는다(`--internal`도). 격리는 네트워크 분리가 아니라 리슨 주소로 한다: Toxiproxy API는 컨테이너 loopback에만 열고 하네스는 `docker exec … /toxiproxy-cli`로 제어한다. CLI에는 상태 지정이 없고 `toggle`만 있다.
