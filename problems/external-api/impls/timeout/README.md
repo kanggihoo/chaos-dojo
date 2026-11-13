@@ -16,7 +16,7 @@ timeout이 지키려는 것은 장애 중에도 주문 API가 막히지 않는 �
 
 공통 앱(`../../app`)을 `IMPL=timeout`으로 실행한다. naive와 같은 이미지이고, lookup 호출 설정만 다르다. 값은 같은 폴더의 [`impl.yaml`](impl.yaml)이 정하고, 출처는 [PROVENANCE.md](PROVENANCE.md)에 있다.
 
-lookup 호출을 시작할 때 300 ms 기한이 시작된다. 이 기한에는 HTTP client pool에서 연결을 얻는 시간, 연결하는 시간, 응답을 받는 시간이 모두 들어간다. `Lookup.DeadlineFactory`가 300 ms가 지나면 진행 중인 호출을 취소하고, 앱은 504(`urn:chaos-lab:problem:upstream-timeout`)를 돌려준다. 연결 timeout 1초와 pool 획득 timeout 2초는 naive와 같지만, 300 ms 기한이 먼저 끝나므로 실제로는 닿지 않는다. 기한 전에 연결이 거부되면 503(`urn:chaos-lab:problem:upstream-unavailable`)으로 바로 실패한다.
+lookup 호출을 시작할 때 300 ms 기한이 시작된다. 이 기한에는 HTTP client pool에서 연결을 얻는 시간, 연결하는 시간, 응답을 받는 시간이 모두 들어간다. `Deadline` 부품이 300 ms가 지나면 진행 중인 호출을 취소하고, 앱은 504(`urn:chaos-lab:problem:upstream-timeout`)를 돌려준다. 연결 timeout 1초와 pool 획득 timeout 2초는 naive와 같지만, 300 ms 기한이 먼저 끝나므로 실제로는 닿지 않는다. 기한 전에 연결이 거부되면 503(`urn:chaos-lab:problem:upstream-unavailable`)으로 바로 실패한다.
 
 이렇게 하면 lookup이 아무리 느려져도 요청 하나가 업무 스레드를 붙잡는 시간은 약 300 ms다. 초당 50건이 들어오면 동시에 필요한 업무 스레드는 15개 정도이고, 업무 스레드 50개 안에 들어온다. 그래서 요청이 큐에 쌓이지 않는다.
 
