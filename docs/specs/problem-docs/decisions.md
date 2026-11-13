@@ -21,7 +21,7 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: none
 
 ## D-4 problem README
 - Status: settled
-- Decision: 업무 상황, 요구사항(SLO, time-to-recovery 한도, 불변 조건)을 문장으로 풀고 각 기준을 둔 이유, 대응 방법 목록, 꼬리 질문의 뿌리를 담는다. 요구사항의 정확한 값은 같은 폴더의 `problem.yaml`을 가리킨다.
+- Decision: 업무 상황, 요구사항(SLO, 회복 조건, 불변 조건)을 하네스 판정과 같은 기준으로 값과 함께 문장으로 풀고 각 기준을 둔 이유, 대응 방법 목록, 꼬리 질문의 뿌리를 담는다. 값의 출처로 같은 폴더의 `problem.yaml`을, 판정 규칙의 출처로 experiment-harness spec을 가리킨다.
 - Rejected: 요구사항을 `problem.yaml` 링크로만 두기 → impl README가 "이 요구사항을 지키려고 이 방식을 골랐다"고 쓸 때 가리킬 설명이 없다 · 구현된 impl만 목록에 적기 → 지금 비교하는 방법이 전체 선택지 중 어디인지 보이지 않는다. 미구현 방법(retry, circuit breaker, bulkhead, cache fallback 등)도 "미구현"으로 표시해 적고, 각 방법이 겨냥하는 요구사항을 붙인다
 
 ## D-5 scenario README
@@ -41,7 +41,7 @@ Glossary: [GLOSSARY.md](../../../GLOSSARY.md) · ADRs: none
 
 ## D-8 꼬리 질문과 결론
 - Status: settled
-- Decision: 각 scenario·impl README 끝에 꼬리 질문을 둔다. 질문마다 `답함`(답한 run id) 또는 `열림`(답할 후보 impl·scenario)을 붙인다. 질문 본문은 그 README에만 두고 problem README는 링크로 잇는다. 기록된 run으로 확인한 결론은 run id와 날짜를 붙여 적는다. 결론의 근거는 repeat 다섯 개가 모두 complete이고 valid인 run만 인정하고, 결론의 수치는 그 run의 run 수준 값(repeat별 값의 중앙값)을 쓴다. 중단된 run의 수치는 참고로도 적지 않는다.
+- Decision: 각 scenario·impl README 끝에 꼬리 질문을 둔다. 질문마다 `답함`(답한 run id) 또는 `열림`(답할 후보 impl·scenario)을 붙인다. 질문 본문은 그 README에만 두고 problem README는 링크로 잇는다. 기록된 run으로 확인한 결론은 run id와 날짜를 붙여 적는다. 결론의 근거는 repeat 다섯 개가 모두 complete이고 valid인 run만 인정하고, 결론의 수치는 그 run의 run 수준 값(repeat별 값의 중앙값)을 쓰고, 하네스가 모으지 않는 구간 값은 repeat별 값에서 중앙값을 직접 구한다. 중단된 run의 수치는 참고로도 적지 않는다.
 - Rejected: 중단된 run의 일부 repeat를 회차를 밝혀 근거로 쓰기 → repeat 한두 번으로는 하네스가 run 결과로 치지 않는 수치를 결론처럼 적게 된다 · 실험 전 질문만 적기 → 배운 것이 쌓이는 곳은 결론이다 · 결론을 STATUS.md나 리포트에만 두기 → 질문과 답이 떨어져 꼬리가 끊긴다 · 별도 backlog 파일 → `열림` 질문이 그대로 다음 impl·scenario 후보 목록이다
 
 ## D-9 숫자와 기록 결과
