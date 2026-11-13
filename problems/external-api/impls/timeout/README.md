@@ -1,36 +1,38 @@
-# timeout: 외부 API 호출 전체를 300 ms에서 끊는다
+# timeout: 외부 상품 API 호출 전체를 300 ms에서 끊는다
 
-## 이 impl이 대표하는 것
+## 겨냥하는 요구사항
 
-외부 API 호출에 전체 기한(deadline)을 두고, 기한을 넘기면 기다리지 않고 바로 실패를 돌려주는 구현이다. 장애 대응 패턴 중 가장 기본인 fail fast다. circuit breaker, bulkhead, retry 같은 다른 패턴도 대부분 이 기한을 전제로 한다.
+timeout이 지키려는 것은 장애 중에도 주문 API가 막히지 않는 것과 회복 조건이다([problem README의 요구사항](../../README.md#요구사항)). lookup이 느려지거나 죽어도 요청 하나가 업무 스레드를 오래 붙잡지 않게 해서, 장애 구간 밖의 요청과 장애 뒤의 요청이 정상으로 처리되게 한다. 불변 조건도 지킨다. 기한을 넘긴 lookup으로는 주문을 만들지 않는다.
 
-naive와 나란히 놓고, "기한 하나만 추가했을 때 장애 중 서비스가 얼마나 달라지는가"를 본다.
+포기하는 것은 장애 중의 주문 성공이다. lookup 응답이 300 ms 안에 오지 않으면 그 주문은 실패한다. 그래서 장애 중 SLO 비율은 naive보다 나아지지 않는다. lookup이 300 ms를 조금 넘는 정도로만 느려져도 정상 주문을 버리게 된다는 비용도 받아들인다.
 
-## 동작
+## 왜 이 방식인가
 
-공통 앱(`../../app`)을 `IMPL=timeout`으로 실행한다. 차이는 `lab.chaos.orders.Lookup` 한 곳에만 있다.
+같은 요구사항을 노리는 방법으로 circuit breaker, bulkhead, retry가 있다([problem README의 대응 방법](../../README.md#대응-방법)). 그중 lookup 호출에 기한을 두는 것을 먼저 고른 이유는, 다른 방법들이 모두 이 기한을 전제로 하기 때문이다. circuit breaker는 "실패"를 세어야 열리는데 기한이 없으면 느린 호출은 실패로 끝나지 않고, retry는 기한 없이 다시 시도하면 기다리는 시간만 늘어난다. 기한 하나만 넣었을 때 무엇이 달라지는지를 먼저 확인해야 다음 방법의 효과를 나눠 볼 수 있다.
 
-| 설정 | 값 |
-|---|---|
-| lookup 전체 호출 기한 `LOOKUP_DEADLINE_MS` | 300 ms |
-| lookup 응답 대기 한도 `LOOKUP_RESPONSE_TIMEOUT_MS` | 300 ms |
-| lookup 연결 timeout | 1,000 ms (naive와 같음) |
-| HTTP client pool 획득 timeout | 2,000 ms (naive와 같음) |
+응답 대기 한도만 짧게 두지 않고 호출 전체에 기한을 둔 이유도 있다. 응답 대기 한도만 있으면 HTTP client pool에서 연결을 기다린 시간과 연결하는 시간은 한도에 들어가지 않는다. 그러면 lookup이 느려져 pool이 꽉 찼을 때 요청이 pool 앞에서 최대 2초를 기다리고, 빨리 실패한다는 목표가 깨진다.
 
-300 ms 기한은 HTTP client pool에서 연결을 얻는 시간, 연결 시간, 응답을 받는 시간을 모두 포함한다. `Lookup.DeadlineFactory`가 요청을 시작할 때 타이머를 걸고, 300 ms가 지나면 진행 중인 호출을 취소한다. 그래서 연결 timeout(1,000 ms)이나 pool 획득 timeout(2,000 ms)이 300 ms보다 길어도, 실제로는 300 ms 안에 끝난다. 기한을 넘기면 앱은 504(`urn:chaos-lab:problem:upstream-timeout`)를 돌려준다.
+## 작동 원리
 
-응답 대기 한도만 짧게 두지 않고 전체 기한을 둔 이유가 있다. 응답 대기 한도만 있으면 pool 획득이나 연결에서 막힌 시간은 한도에 포함되지 않는다. 그러면 lookup이 느려져 pool이 꽉 찼을 때 요청이 pool 앞에서 최대 2초를 기다리고, fail fast가 깨진다.
+공통 앱(`../../app`)을 `IMPL=timeout`으로 실행한다. naive와 같은 이미지이고, lookup 호출 설정만 다르다. 값은 같은 폴더의 [`impl.yaml`](impl.yaml)이 정하고, 출처는 [PROVENANCE.md](PROVENANCE.md)에 있다.
 
-## 이 impl로 확인하려는 가설
+lookup 호출을 시작할 때 300 ms 기한이 시작된다. 이 기한에는 HTTP client pool에서 연결을 얻는 시간, 연결하는 시간, 응답을 받는 시간이 모두 들어간다. `Lookup.DeadlineFactory`가 300 ms가 지나면 진행 중인 호출을 취소하고, 앱은 504(`urn:chaos-lab:problem:upstream-timeout`)를 돌려준다. 연결 timeout 1초와 pool 획득 timeout 2초는 naive와 같지만, 300 ms 기한이 먼저 끝나므로 실제로는 닿지 않는다. 기한 전에 연결이 거부되면 503(`urn:chaos-lab:problem:upstream-unavailable`)으로 바로 실패한다.
 
-lookup이 느려지거나 죽어도 요청 하나가 Tomcat 업무 스레드를 최대 약 300 ms만 붙잡는다. 초당 50건 × 0.3초 = 동시 15개 정도면 충분하므로 업무 스레드(50개)가 소진되지 않는다. 주문은 실패하지만 실패가 빨리 돌아오고, 큐가 쌓이지 않으므로 장애가 끝나면 바로 정상화된다.
+이렇게 하면 lookup이 아무리 느려져도 요청 하나가 업무 스레드를 붙잡는 시간은 약 300 ms다. 초당 50건이 들어오면 동시에 필요한 업무 스레드는 15개 정도이고, 업무 스레드 50개 안에 들어온다. 그래서 요청이 큐에 쌓이지 않는다.
 
-api-slow 기록이 이 가설을 보여 준다(`results/20261031-002528-…-api-slow-timeout-8def62`, repeat 1). 장애 구간에서 201은 11건뿐이라 SLO는 지키지 못했다. 하지만 k6 timeout에 걸린 요청은 0건이었고, 장애 전후 구간의 201 p99는 87 ms, 92 ms로 정상이었다.
+## 해결하는 것과 해결하지 못하는 것
 
-이 impl이 감수하는 비용도 있다. lookup이 300 ms를 조금 넘는 정도로만 느려져도 주문이 실패한다. 이번 scenario는 지연을 2,000 ms로 크게 걸었기 때문에 이 비용은 드러나지 않는다. 기한 근처의 지연을 거는 scenario가 생기면 따로 확인해야 한다.
+해결하는 것은 느린 lookup이 주문 API 전체를 막는 일이다. 실패가 빨리 돌아오고 업무 스레드가 바닥나지 않으므로, 장애가 그 구간 밖으로 번지지 않는다. 클라이언트가 응답을 기다리다 먼저 끊는 일도 없어서, 실패로 알린 주문이 저장되는 ambiguous outcome도 생기지 않는다.
 
-## 관련 문서
+해결하지 못하는 것은 장애 중의 주문 성공이다. lookup 없이는 주문을 만들 수 없다는 점은 naive와 같다. 장애가 계속되는 동안 모든 요청이 300 ms씩 lookup을 기다렸다가 실패한다는 점도 그대로다. 지연이 기한 근처일 때 정상 주문을 얼마나 버리는지는 아직 확인하지 않았다.
 
-- 출처: [PROVENANCE.md](PROVENANCE.md)
-- 비교 대상: [../naive/README.md](../naive/README.md)
-- scenario 설명: `../../scenarios/*/README.md`
+결과 해석을 바꾸는 수치: api-slow에서 예산 안 201 비율의 run 수준 값은 timeout 0.665, naive 0.666으로 거의 같았다(20261031-002528-external-api-api-slow-timeout-8def62, 20261031-004309-external-api-api-slow-naive-2c0c93, 2026-11-13). SLO 판정만 보면 timeout은 아무것도 바꾸지 않은 것처럼 보인다. 차이는 구간 값에서만 보인다.
+
+## 꼬리 질문
+
+- Q. 300 ms 기한을 두면 lookup이 느려져도 주문 API가 막히지 않나? — 답함 · 20261031-002528-external-api-api-slow-timeout-8def62 (2026-11-13): api-slow 장애 구간에서 k6 요청 timeout은 0건, 201 p99는 293 ms였고, 장애 전과 장애 후 구간의 예산 안 201 비율은 0.999와 0.994였다(repeat별 구간 값에서 중앙값을 직접 구함).
+- Q. 기한을 두면 SLO 판정이 naive보다 나아지나? — 답함 · 20261031-002528-external-api-api-slow-timeout-8def62, 20261031-004309-external-api-api-slow-naive-2c0c93 (2026-11-13): 나아지지 않는다. 예산 안 201 비율의 run 수준 값은 0.665와 0.666이고 둘 다 missed다.
+- Q. 장애 중에도 주문 일부를 받으려면? — 열림 · 후보: cache fallback impl, 마지막으로 받은 가격으로 주문을 만든다.
+- Q. 장애가 계속되는 동안 매 요청이 300 ms씩 lookup을 기다릴 필요가 있나? — 열림 · 후보: circuit breaker impl, 실패가 이어지면 lookup 호출을 잠시 멈춘다.
+- Q. lookup이 300 ms를 조금 넘게 느려지면 정상 주문을 얼마나 버리나? — 열림 · 후보: 지연을 300~500 ms로 거는 새 scenario.
+- Q. lookup 연결이 거부될 때도 실패가 빨리 돌아오나? — 열림 · 후보: api-down scenario를 timeout으로 repeat 다섯 개 모두 실행한 run.
